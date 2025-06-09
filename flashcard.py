@@ -9,3 +9,4 @@ class Flashcard():
             front (str): The text displayed on the front of the flashcard.
             back (str): The text displayed on the back of the flashcard.
         """
+        
