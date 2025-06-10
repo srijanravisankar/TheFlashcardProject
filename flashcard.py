@@ -11,3 +11,7 @@ class Flashcard():
         """
         self.front = front
         self.back = back
+        
+        
+if __name__ == "__main__":
+    pass
