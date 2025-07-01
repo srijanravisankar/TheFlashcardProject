@@ -8,7 +8,7 @@ class Flashcard(Base):
     __tablename__ = "flashcard"
     
     id = mapped_column(Integer, primary_key=True)
-    front = mapped_column(String, nullable=False)
-    back = mapped_column(String, nullable=False)
+    front_text = mapped_column(String, nullable=False)
+    back_text = mapped_column(String, nullable=False)
     
     

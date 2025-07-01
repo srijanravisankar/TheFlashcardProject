@@ -1,10 +1,10 @@
-# from installed packages
+# From installed packages
 from fastapi import FastAPI
 
-# from subpackages
+# From subpackages
 from .routes import card
 
-# from modules
+# From modules
 from .models import Base
 from .database import engine
 
