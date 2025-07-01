@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, status, Depends
 from typing import List
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from .. import schemas, models
 
@@ -12,10 +13,12 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[schemas.CardResponse])
-def get_cards(db: Session = Depends(get_db)):
+def get_cards(session: Session = Depends(get_db)):
     print("Getting Flashcards")
     
-    cards = db.query(models.Flashcard).all()
+    stmt = select(models.Flashcard)
+    result = session.scalars(stmt)
+    cards = result.all()
     
     return cards
 
@@ -29,5 +32,7 @@ def create_cards(card: schemas.CardCreate, db: Session = Depends(get_db)):
     
     return new_card
 
-
+@router.get("/{id}", response_model=schemas.CardResponse)
+def get_card(id: int, db: Session = Depends(get_db)):
+    card = db.query(models.Flashcard).filter(models.Flashcard.id == id).first()
 
