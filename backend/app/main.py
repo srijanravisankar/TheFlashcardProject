@@ -1,4 +1,5 @@
 # From installed packages
+# module -> class -> function
 from fastapi import FastAPI
 
 # From subpackages
