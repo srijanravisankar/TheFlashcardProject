@@ -1,7 +1,7 @@
 from fastapi import status, APIRouter, Response, HTTPException, Depends
 from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import select, insert
+from sqlalchemy import select
 
 from .. import schemas, models
 
@@ -13,15 +13,7 @@ router = APIRouter(
     tags=["Cards"]
 )
 
-# Get all the cards from the 'flashcard' table
-@router.get("/", response_model=List[schemas.CardResponse])
-def get_cards(session: Session = Depends(get_db)):    
-    stmt = select(models.Flashcard)
-    result = session.scalars(stmt)
-    cards = result.all()
-    
-    return cards
-
+# Create a flashcard and add it into the 'flashcard' table
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.CardResponse)
 def create_cards(card: schemas.CardCreate, session: Session = Depends(get_db)):
     new_card = models.Flashcard(**card.model_dump())
@@ -32,6 +24,16 @@ def create_cards(card: schemas.CardCreate, session: Session = Depends(get_db)):
     
     return new_card
 
+# Get all the flashcards from the 'flashcard' table
+@router.get("/", response_model=List[schemas.CardResponse])
+def get_cards(session: Session = Depends(get_db)):    
+    stmt = select(models.Flashcard)
+    result = session.scalars(stmt)
+    cards = result.all()
+    
+    return cards
+
+# Get a flashcard from the 'flashcard' table given its given
 @router.get("/{id}", response_model=schemas.CardResponse)
 def get_card(id: int, session: Session = Depends(get_db)):
     stmt = select(models.Flashcard).where(models.Flashcard.id == id)
@@ -40,7 +42,38 @@ def get_card(id: int, session: Session = Depends(get_db)):
     
     if card == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Post with id '{id}' was not found")
+                            detail=f"Card with id '{id}' was not found")
     
     return card
+
+# Update a flashcard in the 'flashcard' table given its id
+@router.put("/{id}", response_model=schemas.CardResponse)
+def update_cards(id: int, update_card: schemas.CardCreate, session: Session = Depends(get_db)):
+    card = session.get(models.Flashcard, id)
+    
+    if card == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Card with id '{id}' was not found")
+        
+    update_data = update_card.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(card, key, value)
+        
+    session.commit()
+    session.refresh(card)
+    
+    return card
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_card(id: int, session: Session = Depends(get_db)):
+    card = session.get(models.Flashcard, id)
+    
+    if card == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Card with id '{id}' was not found")
+    
+    session.delete(card)
+    session.commit()
+    
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
