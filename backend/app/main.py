@@ -1,6 +1,7 @@
 # From installed packages
 # module -> class -> function
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # From subpackages
 from .routes import card
@@ -13,6 +14,18 @@ from .database import engine
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(card.router)
 
