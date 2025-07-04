@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # From subpackages
-from .routes import card
+from .routes import card, folder
 
 # From modules
 from .models import Base
@@ -28,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(card.router)
+app.include_router(folder.router)
 
 @app.get("/")
 def root():

@@ -15,7 +15,7 @@ router = APIRouter(
 
 # Create a flashcard and add it into the 'flashcard' table
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.CardResponse)
-def create_cards(card: schemas.CardCreate, session: Session = Depends(get_db)):
+def create_card(card: schemas.CardCreate, session: Session = Depends(get_db)):
     new_card = models.Flashcard(**card.model_dump())
     
     session.add(new_card)
@@ -48,7 +48,7 @@ def get_card(id: int, session: Session = Depends(get_db)):
 
 # Update a flashcard in the 'flashcard' table given its id
 @router.put("/{id}", response_model=schemas.CardResponse)
-def update_cards(id: int, update_card: schemas.CardCreate, session: Session = Depends(get_db)):
+def update_card(id: int, update_card: schemas.CardCreate, session: Session = Depends(get_db)):
     card = session.get(models.Flashcard, id)
     
     if card == None:
