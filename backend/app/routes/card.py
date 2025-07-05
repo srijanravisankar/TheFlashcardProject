@@ -16,6 +16,12 @@ router = APIRouter(
 # Create a flashcard and add it into the 'flashcard' table
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.CardResponse)
 def create_card(card: schemas.CardCreate, session: Session = Depends(get_db)):
+    # check for deck existence
+    deck = session.get(models.Deck, card.deck_id)
+    if deck is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Deck with id '{card.deck_id}' was not found")
+    
     new_card = models.Flashcard(**card.model_dump())
     
     session.add(new_card)
@@ -49,6 +55,12 @@ def get_card(id: int, session: Session = Depends(get_db)):
 # Update a flashcard in the 'flashcard' table given its id
 @router.put("/{id}", response_model=schemas.CardResponse)
 def update_card(id: int, update_card: schemas.CardCreate, session: Session = Depends(get_db)):
+    # check for deck existence
+    deck = session.get(models.Deck, update_card.deck_id)
+    if deck is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Deck with id '{update_card.deck_id}' was not found")
+    
     card = session.get(models.Flashcard, id)
     
     if card == None:

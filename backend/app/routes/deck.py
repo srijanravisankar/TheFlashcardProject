@@ -16,6 +16,12 @@ router = APIRouter(
 # Create a deck and add it into the 'deck' table
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.DeckResponse)
 def create_deck(deck: schemas.DeckCreate, session: Session = Depends(get_db)):
+    # check for folder existence
+    parent_folder = session.get(models.Folder, deck.folder_id)
+    if deck.folder_id is not None and parent_folder is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Deck with id '{deck.folder_id}' was not found")
+    
     new_deck = models.Deck(**deck.model_dump())
     
     session.add(new_deck)
@@ -50,6 +56,12 @@ def get_deck(id: int, session: Session = Depends(get_db)):
 # Update a deck in the 'deck' table given its id
 @router.put("/{id}", response_model=schemas.DeckResponse)
 def update_deck(id: int, update_deck: schemas.DeckCreate, session: Session = Depends(get_db)):
+    # check for folder existence
+    parent_folder = session.get(models.Folder, update_deck.folder_id)
+    if update_deck.folder_id is not None and parent_folder is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Deck with id '{update_deck.folder_id}' was not found")
+    
     deck = session.get(models.Deck, id)
     
     if deck == None:
