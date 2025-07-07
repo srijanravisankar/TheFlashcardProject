@@ -1,5 +1,5 @@
-from fastapi import status, APIRouter, Response, HTTPException, Depends
-from typing import List
+from fastapi import Query, status, APIRouter, Response, HTTPException, Depends
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -32,14 +32,16 @@ def create_card(card: schemas.CardCreate, session: Session = Depends(get_db)):
 
 # Get all the flashcards from the 'flashcard' table
 @router.get("/", response_model=List[schemas.CardResponse])
-def get_cards(session: Session = Depends(get_db)):    
+def get_cards(deck_id: Optional[int] = Query(None), session: Session = Depends(get_db)):    
     stmt = select(models.Flashcard)
-    result = session.scalars(stmt)
-    cards = result.all()
-    
-    return cards
 
-# Get a flashcard from the 'flashcard' table given its given
+    if deck_id is not None:
+        stmt = stmt.where(models.Flashcard.deck_id == deck_id)
+
+    result = session.scalars(stmt)
+    return result.all()
+
+# Get a flashcard from the 'flashcard' table given its id
 @router.get("/{id}", response_model=schemas.CardResponse)
 def get_card(id: int, session: Session = Depends(get_db)):
     stmt = select(models.Flashcard).where(models.Flashcard.id == id)

@@ -39,13 +39,13 @@ def create_folder(folder: schemas.FolderCreate, session: Session = Depends(get_d
 # Get all the folders from the 'folder' table
 @router.get("/", response_model=List[schemas.FolderResponse])
 def get_folders(session: Session = Depends(get_db)):    
-    stmt = select(models.Folder)
+    stmt = select(models.Folder).where(models.Folder.parent_id == None)
     result = session.scalars(stmt)
     folders = result.all()
     
     return folders
 
-# Get a folder from the 'folder' table given its given
+# Get a folder from the 'folder' table given its id
 @router.get("/{id}", response_model=schemas.FolderResponse)
 def get_folder(id: int, session: Session = Depends(get_db)):
     stmt = select(models.Folder).where(models.Folder.id == id)
@@ -58,7 +58,7 @@ def get_folder(id: int, session: Session = Depends(get_db)):
                             detail=f"Folder with id '{id}' was not found")
     
     return folder
-
+    
 # Update a folder in the 'folder' table given its id
 @router.put("/{id}", response_model=schemas.FolderResponse)
 def update_folder(id: int, update_folder: schemas.FolderCreate, session: Session = Depends(get_db)):

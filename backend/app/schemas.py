@@ -1,26 +1,28 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import List, Optional
 
 # Folder -----------------------------------------------------------------------------------------
 class Folder(BaseModel):
-    name: str
-    parent_id: Optional[int] = None
+    label: str
     
 class FolderCreate(Folder):
+    parent_id: Optional[int] = None
     pass
 
 class FolderResponse(Folder):
     id: int
+    subfolders: List["FolderResponse"] = Field(default_factory=list)
+    decks: List["DeckResponse"] = Field(default_factory=list)
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)
 
 # Deck -----------------------------------------------------------------------------------------
 class Deck(BaseModel):
-    name: str
-    folder_id: Optional[int] = None
+    label: str
     
 class DeckCreate(Deck):
+    folder_id: Optional[int] = None
     pass
 
 class DeckResponse(Deck):

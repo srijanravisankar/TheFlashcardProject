@@ -8,7 +8,7 @@ class Base(DeclarativeBase):
 class Folder(Base):
     __tablename__ = "folder"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    label: Mapped[str] = mapped_column(String, nullable=False)
     
     # a deck has 0 or 1 parent folder
     parent_id: Mapped[Optional[int]] = mapped_column(ForeignKey("folder.id"), nullable=True)
@@ -21,7 +21,7 @@ class Folder(Base):
 class Deck(Base):
     __tablename__ = "deck"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    label: Mapped[str] = mapped_column(String, nullable=False)
     
     # a deck has 0 or 1 parent folder
     folder_id: Mapped[Optional[int]] = mapped_column(ForeignKey("folder.id"), nullable=True)

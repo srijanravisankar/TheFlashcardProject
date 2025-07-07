@@ -1,11 +1,10 @@
- import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
- function App() {
+import FolderTree from './components/FolderTree';
 
+function App() {
   return (
-    <h1>
-      <Link to="/cards">Flashcards</Link>
-    </h1>
+    <FolderTree />
   );
 }
 
