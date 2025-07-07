@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Box, Typography, Paper, CircularProgress, IconButton, TextField } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, IconButton, TextField, Fab } from '@mui/material';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
+import AddIcon from '@mui/icons-material/Add';
 
 import api from '../api';
 
@@ -15,7 +16,6 @@ export default function Deck() {
   const [edit, setEdit] = useState(false);
   const [frontText, setFrontText] = useState('');
   const [backText, setBackText] = useState('');
-
 
   useEffect(() => getCards(), [deckId]);
 
@@ -85,6 +85,8 @@ export default function Deck() {
           )
         )
       }
+
+      {cards === null ? <></> : <Fab color="primary" aria-label="add"><AddIcon /></Fab> }
     </Box>
   );
 }
