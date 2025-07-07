@@ -11,19 +11,21 @@ export default function Deck() {
   const { deckId } = useParams();
   const [cards, setCards] = useState();
 
-  useEffect(() => {
+  useEffect(() => getCards(), [deckId]);
+
+  const getCards = () => {
     api
       .get(`/cards?deck_id=${deckId}`)
       .then((res) => setCards(res.data))
       .catch((err) => console.error('Failed to fetch cards:', err));
-  }, [deckId]);
+  }
 
-  // const handleDelete = (id) => {
-  //   api
-  //     .delete(`/cards/${id}`)
-  //     .then((res) => setCards(res.data))
-  //     .catch((err) => console.error('Failed to delete card:', err));
-  // }
+  const deleteCard = (id) => {
+    api
+      .delete(`/cards/${id}`)
+      .then(() => getCards())
+      .catch((err) => console.error('Failed to delete card:', err));
+  }
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -44,7 +46,7 @@ export default function Deck() {
               >
                 <Typography><strong>Q:</strong> {card.front_text}</Typography>
                 <Typography><strong>A:</strong> {card.back_text}</Typography>
-                <IconButton onClick={() => handleDelete(card.id)}>
+                <IconButton onClick={() => deleteCard(card.id)}>
                   <DeleteOutlineRoundedIcon />
                 </IconButton>
                 <IconButton onClick={() => console.log('update button clicked', card.id)}>
