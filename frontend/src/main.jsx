@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.css';
 
-import FolderTree from './components/FolderTree.jsx';
+import FolderTree from './components/tree/FolderTree.jsx';
 import Deck from './components/Deck.jsx';
 
 const router = createBrowserRouter([

@@ -1,8 +1,7 @@
-import FolderTree from './components/FolderTree';
 
 function App() {
   return (
-      <FolderTree />
+      'hi'
   );
 }
 

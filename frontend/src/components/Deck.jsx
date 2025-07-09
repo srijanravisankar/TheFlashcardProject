@@ -32,7 +32,7 @@ export default function Deck() {
         getCards();
         setCreate(false);
       })
-      .catch((err) => console.error('Failed to update card:', err));
+      .catch((err) => console.error('Failed to create card:', err));
   }
 
   const getCards = () => {
