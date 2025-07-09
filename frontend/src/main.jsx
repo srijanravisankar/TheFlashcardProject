@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.css';
 
-import App from './App.jsx';
 import FolderTree from './components/FolderTree.jsx';
 import Deck from './components/Deck.jsx';
 
