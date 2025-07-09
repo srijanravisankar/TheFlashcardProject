@@ -13,15 +13,17 @@ export default function FolderTree() {
   const [tree, setTree] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchTree = () => {
     api.get('/folders')
-      .then(res => {
-        const normalized = res.data.map(normalizeTree);
-        setTree(normalized);
-        console.log(normalized)
-      })
-      .catch(err => console.error('Failed to fetch folders:', err));
-  }, []);
+    .then(res => {
+      const normalized = res.data.map(folder => normalizeTree(folder, fetchTree));
+      setTree(normalized);
+      console.log(normalized)
+    })
+    .catch(err => console.error('Failed to fetch folders:', err));
+  }
+  
+  useEffect(fetchTree, []);
 
   const handleItemClick = (event, item) => {
     if (item.startsWith('deck-')) {
@@ -37,7 +39,6 @@ export default function FolderTree() {
   return (
     <Box sx={{ padding: 2 }}>
       <h2>Srijan's FSRS App</h2>
-
       {
         tree === null ?  <CircularProgress sx={{ color: 'black' }} /> : 
           <RichTreeView

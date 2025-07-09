@@ -5,7 +5,7 @@ import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 
 import { useTreeItem } from '@mui/x-tree-view/useTreeItem';
 import {
@@ -20,6 +20,8 @@ import { TreeItemIcon } from '@mui/x-tree-view/TreeItemIcon';
 import { TreeItemProvider } from '@mui/x-tree-view/TreeItemProvider';
 import { TreeItemDragAndDropOverlay } from '@mui/x-tree-view/TreeItemDragAndDropOverlay';
 import { useTreeItemModel } from '@mui/x-tree-view/hooks';
+
+import { deleteFolder } from '../../routes/FolderRoutes';
 
 export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   const { id, type, itemId, label, disabled, children, ...other } = props;
@@ -45,7 +47,7 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
             '&:hover .tree-actions': { display: 'flex' },
             display: 'flex',
             alignItems: 'center',
-            height: 30
+            height: 33
           }}>
 
           <TreeItemIconContainer {...getIconContainerProps()}>
@@ -56,34 +58,44 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
             {item.type === 'folder' ? <FolderRoundedIcon /> : <LayersRoundedIcon />}
             <TreeItemCheckbox {...getCheckboxProps()} />
             <TreeItemLabel {...getLabelProps()} />
-
-            <Box className="tree-actions" sx={{ display: 'none', gap: 0.5 }}>
-              <IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log(`Delete ${item.id}`);
-                }}
-              ><AddCircleRoundedIcon /></IconButton>
-              <IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log(`Delete ${item.id}`);
-                }}
-              ><EditRoundedIcon /></IconButton>
-              <IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log(`Delete ${item.id}`);
-                }}
-              ><DeleteRoundedIcon /></IconButton>
-            </Box>
-
+            {item.type === 'folder' ? <TreeAction item={item} action={'add'} /> : null}
+            <TreeAction item={item} action={'edit'} />
+            <TreeAction item={item} action={'delete'} fetchTree={item.fetchTree} />
           </Box>
+
           <TreeItemDragAndDropOverlay {...getDragAndDropOverlayProps()} />
-        </TreeItemContent>
-        
+        </TreeItemContent>        
         {children && <TreeItemGroupTransition {...getGroupTransitionProps()} />}
       </TreeItemRoot>
     </TreeItemProvider>
   );
 });
+
+const TreeAction = ({item, action, fetchTree}) => {
+  const handleDelete = (item) => {
+  console.log(action, item.type);
+    if (item.type === 'folder') {
+      const folderId = item.id.replace('folder-', '');
+      deleteFolder(folderId);
+      fetchTree()
+    }
+  };
+
+  return (
+      <Box className="tree-actions" sx={{ display: 'none', gap: 0.5 }}>
+
+        <IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log(`${action} ${item.id}`);
+            if (action === 'delete') handleDelete(item)
+          }}
+        >
+          {action === 'add' ? <AddBoxRoundedIcon /> : null}
+          {action === 'edit' ? <EditRoundedIcon /> : null}
+          {action === 'delete' ? <DeleteRoundedIcon /> : null}
+        </IconButton>
+
+      </Box>
+    );
+}
