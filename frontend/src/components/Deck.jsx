@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Box, Typography, Paper, CircularProgress, IconButton, TextField, Fab } from '@mui/material';
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 
 import api from '../api';
 
@@ -64,10 +65,10 @@ export default function Deck() {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <h2>Deck {deckId}:</h2>
+      <h2>Deck {deckId}</h2>
 
       {
-        cards === null ?  <CircularProgress /> : (
+        cards === null ?  <CircularProgress sx={{ color: 'black' }} /> : (
           cards.length === 0 ? (
             <Typography>No cards found.</Typography>
           ) : (
@@ -82,8 +83,8 @@ export default function Deck() {
                             setEditCardId(card.id);
                             setFrontText(card.front_text);
                             setBackText(card.back_text);
-                          }}><EditRoundedIcon /></IconButton>
-                        <IconButton onClick={() => deleteCard(card.id)}><DeleteOutlineRoundedIcon /></IconButton>
+                          }}><EditRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => deleteCard(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
                       </Box>
                     </Box>
                   </> : <>
@@ -91,8 +92,8 @@ export default function Deck() {
                       <TextField label="Front text" defaultValue={frontText} onChange={(e) => setFrontText(e.target.value)} autoFocus />
                       <TextField label="Back text" defaultValue={backText} onChange={(e) => setBackText(e.target.value)} />
                       <Box>
-                        <IconButton onClick={() => updateCard(card.id, {deckId, frontText, backText})}><SaveRoundedIcon /></IconButton>
-                        <IconButton onClick={() => deleteCard(card.id)}><DeleteOutlineRoundedIcon /></IconButton>
+                        <IconButton onClick={() => updateCard(card.id, {deckId, frontText, backText})}><SaveRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => deleteCard(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
                       </Box>
                     </Box>
                   </>
@@ -106,15 +107,17 @@ export default function Deck() {
       {!create ? <></> : 
       <Paper sx={paperStyle}>
         <Box sx={editCardStyle}>
-          <TextField label="Front text" onChange={(e) => setFrontText(e.target.value)} />
-          <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} />
+          <TextField label="Front text" onChange={(e) => setFrontText(e.target.value)} sx={{ color: 'black' }} />
+          <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} sx={{ outline: 'black' }} />
           <Box>
-            <IconButton onClick={() => createCard({deckId, frontText, backText})}><AddRoundedIcon /></IconButton>
-            <IconButton onClick={() => setCreate(false)}><DeleteOutlineRoundedIcon /></IconButton>
+            <IconButton onClick={() => createCard({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
+            <IconButton onClick={() => setCreate(false)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
           </Box>
         </Box></Paper>}
 
-      {cards === null ? <></> : <Fab color="primary" aria-label="add" size="medium" onClick={() => setCreate(true)}>
+      {cards === null ? <></> : 
+        <Fab aria-label="add" size="medium" onClick={() => setCreate(true)} disabled={create}
+          sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: '#333'}}}>
         <AddRoundedIcon />
         </Fab> }
     </Box>

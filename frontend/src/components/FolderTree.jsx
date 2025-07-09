@@ -1,73 +1,7 @@
-// import { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-// import { Box, CircularProgress } from '@mui/material';
-// import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-
-// import api from '../api';
-
-// const normalizeTree = (folder) => {
-//   return {
-//     id: `folder-${folder.id}`,
-//     label: `📁 ${folder.label}`,
-//     type: 'folder',
-//     children: [
-//       ...(folder.subfolders?.map(normalizeTree) ?? []),
-//       ...(folder.decks?.map(deck => ({
-//         id: `deck-${deck.id}`,
-//         label: `📚 ${deck.label}`,
-//         type: 'children',
-//         children: []
-//       })) ?? [])
-//     ]
-//   };
-// };
-
-// export default function FolderTree() {
-//   const [tree, setTree] = useState(null);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     api.get('/folders')
-//       .then(res => {
-//         const normalized = res.data.map(normalizeTree);
-//         setTree(normalized);
-//         console.log(normalized)
-//       })
-//       .catch(err => console.error('Failed to fetch folders:', err));
-//   }, []);
-
-  // const handleItemClick = (event, item) => {
-  //   if (item.startsWith('deck-')) {
-  //     const deckId = item.replace("deck-", "");
-  //     navigate(`/decks/${deckId}`)
-  //     console.log(`type: deck, id: ${deckId}`);
-  //   } else if (item.startsWith('folder-')) {
-  //     const folderId = item.replace("folder-", "");
-  //     console.log(`type: folder, id: ${folderId}`);
-  //   }
-  // };
-
-//   return (
-//     <Box sx={{ minHeight: 352, minWidth: 250 }}>
-//       <h3>Srijan's FSRS App</h3>
-//       {
-//         tree === null ?  <CircularProgress /> : 
-//         <RichTreeView 
-//           items={tree} 
-//           onItemClick={handleItemClick}
-//         />
-
-//       }
-//     </Box>
-//   );
-// }
-
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
+import { Box, CircularProgress, IconButton } from '@mui/material';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
-import StyleRoundedIcon from '@mui/icons-material/StyleRounded';
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
@@ -86,23 +20,7 @@ import { TreeItemDragAndDropOverlay } from '@mui/x-tree-view/TreeItemDragAndDrop
 import { useTreeItemModel } from '@mui/x-tree-view/hooks';
 
 import api from '../api';
-
-const normalizeTree = (folder) => {
-  return {
-    id: `folder-${folder.id}`,
-    label: `${folder.label}`,
-    type: 'folder',
-    children: [
-      ...(folder.subfolders?.map(normalizeTree) ?? []),
-      ...(folder.decks?.map(deck => ({
-        id: `deck-${deck.id}`,
-        label: `${deck.label}`,
-        type: 'deck',
-        children: []
-      })) ?? [])
-    ]
-  };
-};
+import { normalizeTree } from '../utils';
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   const { id, type, itemId, label, disabled, children, ...other } = props;
@@ -132,6 +50,15 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
             {item.type === 'folder' ? <FolderRoundedIcon /> : <LayersRoundedIcon />}
             <TreeItemCheckbox {...getCheckboxProps()} />
             <TreeItemLabel {...getLabelProps()} />
+            <IconButton
+              edge="end"
+              size="small"
+              sx={{ marginLeft: 'auto', color: 'gray' }}
+              onClick={(e) => {
+                e.stopPropagation(); // 👈 prevent expanding/collapsing
+                console.log(`Delete ${item.id}`); // Replace with delete handler
+              }}
+            ></IconButton>
           </Box>
           <TreeItemDragAndDropOverlay {...getDragAndDropOverlayProps()} />
         </TreeItemContent>
@@ -167,12 +94,17 @@ export default function FolderTree() {
   };
 
   return (
-    <Box sx={{ minHeight: 200, minWidth: 250 }}>
-      <RichTreeView
-        items={tree}
-        slots={{ item: CustomTreeItem }}
-        onItemClick={handleItemClick}
-      />
+    <Box sx={{ padding: 2 }}>
+      <h2>Srijan's FSRS App</h2>
+
+      {
+        tree === null ?  <CircularProgress sx={{ color: 'black' }} /> : 
+          <RichTreeView
+            items={tree}
+            slots={{ item: CustomTreeItem }}
+            onItemClick={handleItemClick}
+          />
+      }
     </Box>
   );
 }
