@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, useTransition, forwardRef } from 'react';
 
 import { Box, IconButton, TextField } from '@mui/material';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
@@ -27,6 +27,8 @@ import { deleteFolder, updateFolder } from '../../routes/FolderRoutes';
 export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   const { id, type, itemId, label, disabled, children, ...other } = props;
   const [edit, setEdit] = useState(false);
+  const [editLabel, setEditLabel] = useState('');
+  const [isPending, startTransition] = useTransition();
 
   const {
     getContextProviderProps,
@@ -41,8 +43,6 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   } = useTreeItem({ id, type, itemId, children, label, disabled, rootRef: ref });
 
   const item = useTreeItemModel(itemId);
-
-  console.log(edit)
 
   return (
     <TreeItemProvider {...getContextProviderProps()}>
@@ -63,14 +63,16 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
             <TreeItemCheckbox {...getCheckboxProps()} />
 
             {!edit ? <TreeItemLabel {...getLabelProps()} /> :
-            <TextField variant="standard" size="small" onClick={(e) => {e.stopPropagation();}} autoFocus defaultValue={item.label}  
-            sx={{ "& .MuiInputBase-input": { fontSize: 15, height: 10, padding: 1 } }} />}
+            <TextField variant="standard" size="small" onChange={(e) => setEditLabel(e.target.value)}
+              onClick={(e) => {e.stopPropagation()}} onKeyDown={(e) => e.stopPropagation()}
+              value={editLabel} autoFocus
+              sx={{ "& .MuiInputBase-input": { fontSize: 16, height: 10, padding: 1  } }} />}
 
             <Box sx={{ display: 'flex', gap: 0.5, marginLeft: 'auto' }}>
               {item.type === 'folder' ? <TreeAction item={item} action={'add'} /> : null}
 
-              {!edit ? <TreeAction item={item} action={'edit'} setEdit={setEdit} /> : 
-              <TreeAction item={item} action={'save'} setEdit={setEdit} />}
+              {!edit ? <TreeAction item={item} action={'edit'} setEdit={setEdit} setEditLabel={setEditLabel} /> : 
+              <TreeAction item={item} action={'save'} setEdit={setEdit} editLabel={editLabel} startTransition={startTransition} />}
 
               <TreeAction item={item} action={'delete'} fetchTree={item.fetchTree} />
             </Box>
@@ -84,26 +86,28 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   );
 });
 
-const TreeAction = ({item, action, setEdit}) => {
-  const handleUpdate = (item) => {
-    console.log(action, item.type);
+const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, startTransition}) => {
+  const handleUpdate = async () => {
+    console.log('hi');
+    
     if (item.type === 'folder') {
       const folderId = item.id.replace('folder-', '');
-      updateFolder(folderId, item.fetchTree);
+      await updateFolder(folderId, editLabel, item.fetchTree, setEdit);
     } else if (item.type === 'deck') {
       const deckId = item.id.replace('deck-', '');
-      updateFolder(deckId, item.fetchTree);
+      updateDeck(deckId, item.label, item.fetchTree);
     }
-    // fetchTree()
+
+    startTransition(() => {
+      setEdit(false);
+    });
   };
 
-  const handleDelete = (item) => {
-    console.log(action, item.type);
+  const handleDelete = () => {
     if (item.type === 'folder') {
       const folderId = item.id.replace('folder-', '');
-      deleteFolder(folderId);
+      deleteFolder(folderId, item.fetchTree);
     }
-    item.fetchTree()
   };
 
   return (
@@ -113,9 +117,12 @@ const TreeAction = ({item, action, setEdit}) => {
           onClick={(e) => {
             e.stopPropagation();
             console.log(`${action} ${item.id}`);
-            if (action === 'edit') setEdit(true)
-            if (action === 'save') setEdit(false)
-            if (action === 'delete') handleDelete(item)
+            if (action === 'edit') {
+              setEditLabel(item.label);
+              setEdit(true);
+            }
+            if (action === 'save') handleUpdate(false);
+            if (action === 'delete') handleDelete()
           }}
         >
           {action === 'add' ? <AddBoxRoundedIcon /> : null}
