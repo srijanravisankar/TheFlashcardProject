@@ -25,6 +25,7 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   const [edit, setEdit] = useState(false);
   const [editLabel, setEditLabel] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const {
     getContextProviderProps,
@@ -44,7 +45,12 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
     <TreeItemProvider {...getContextProviderProps()}>
       <TreeItemRoot {...getRootProps(other)}>
         <TreeItemContent {...getContentProps()} sx={{
-            '&:hover .tree-actions': { display: 'flex' },
+            '&:hover .tree-actions': {
+              display: 'flex',
+            },
+            '.tree-actions': {
+              display: anchorEl ? 'flex' : 'none',
+            },
             display: 'flex',
             alignItems: 'center',
             height: 33
@@ -65,7 +71,7 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
               sx={{ "& .MuiInputBase-input": { fontSize: 16, height: 10, padding: 1  } }} />}
 
             <Box sx={{ display: 'flex', gap: 0.5, marginLeft: 'auto' }}>
-              {item.type === 'folder' ? <TreeAction item={item} action={'add'} /> : null}
+              {item.type === 'folder' ? <TreeAction item={item} action={'add'} anchorEl={anchorEl} setAnchorEl={setAnchorEl} /> : null}
 
               {!edit ? <TreeAction item={item} action={'edit'} setEdit={setEdit} setEditLabel={setEditLabel} /> : 
               <TreeAction item={item} action={'save'} setEdit={setEdit} editLabel={editLabel} startTransition={startTransition} />}
