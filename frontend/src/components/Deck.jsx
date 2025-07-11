@@ -8,8 +8,12 @@ import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import ReportIcon from '@mui/icons-material/Report';
+import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 
 import api from '../api';
+
+import { getDeck } from '../routes/DeckRoutes';
+import { getCards } from '../routes/CardRoutes';
 
 export default function Deck() {
   const { deckId } = useParams();
@@ -19,8 +23,24 @@ export default function Deck() {
   const [create, setCreate] = useState(false);
   const [frontText, setFrontText] = useState('');
   const [backText, setBackText] = useState('');
+  const [deckInfo, setDeckInfo] = useState(null);
 
-  useEffect(() => getCards(), [deckId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const cardRes = await getCards(deckId);
+        setCards(cardRes.data);
+
+        const info = await getDeck(deckId);
+        setDeckInfo(info);
+      } catch (err) {
+        console.error('Failed to fetch deck or cards:', err);
+      }
+    };
+
+    fetchData();
+  }, [deckId]);
+
 
   const createCard = (updatedCard) => {
     api
@@ -34,13 +54,6 @@ export default function Deck() {
         setCreate(false);
       })
       .catch((err) => console.error('Failed to create card:', err));
-  }
-
-  const getCards = () => {
-    api
-      .get(`/cards?deck_id=${deckId}`)
-      .then((res) => setCards(res.data))
-      .catch((err) => console.error('Failed to fetch cards:', err));
   }
 
   const deleteCard = (id) => {
@@ -66,14 +79,19 @@ export default function Deck() {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <h2>Deck {deckId}</h2>
+      <Box sx={{display: 'flex', alignItems: 'center', gap: 2, marginBottom: "18px"}}>
+        <LayersRoundedIcon sx={{fontSize: '30px'}} />
+        <h2>
+          {deckInfo?.data.label || null}
+        </h2>
+      </Box>
 
       {
         cards === null ?  <CircularProgress sx={{ color: 'black' }} /> : (
           cards.length === 0 ? (
-            <Box sx={{display: 'flex', alignItems: 'center', gap: 1, marginBottom: "45px"}}>
+            <Box sx={{display: 'flex', alignItems: 'center', gap: 1, marginBottom: "35px"}}>
               <ReportIcon size="large" sx={{fontSize: 35}} />
-              <Typography sx={{fontSize: "18px"}}>No cards found.</Typography>
+              <Typography sx={{fontSize: "17px"}}>No cards found!</Typography>
             </Box>
           ) : (
             cards.map((card) => (
@@ -121,7 +139,7 @@ export default function Deck() {
 
       {cards === null ? <></> : 
         <Fab aria-label="add" size="medium" onClick={() => setCreate(true)} disabled={create}
-          sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: '#333'}}}>
+          sx={{backgroundColor: 'black', color: 'white', marginTop: '20px', '&:hover': {backgroundColor: '#333'}}}>
         <AddRoundedIcon />
         </Fab> }
     </Box>

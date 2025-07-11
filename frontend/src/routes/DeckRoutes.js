@@ -12,6 +12,12 @@ export const addDeck = async (id, label, fetchTree) => {
         .catch((err) => console.error('Failed to add deck:', err));
 }
 
+export const getDeck = async (id) => {
+  return api
+          .get(`/decks/${id}`)
+          .catch((err) => console.error('Failed to fetch deck:', err));
+}
+
 export const updateDeck = async (id, label, fetchTree) => {
     return api
       .put(`/decks/${id}`, {
