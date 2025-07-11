@@ -26,6 +26,7 @@ class DeckCreate(Deck):
     pass
 
 class DeckResponse(Deck):
+    folder_id: Optional[int] = None
     id: int
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict

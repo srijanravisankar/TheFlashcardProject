@@ -6,7 +6,7 @@ import { Box, CircularProgress } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
 import api from '../../api';
-import { normalizeTree } from '../../utils';
+import { normalizeTree, normalizeAll } from '../../utils';
 import { CustomTreeItem } from './CustormTreeItem';
 
 export default function FolderTree() {
@@ -14,14 +14,16 @@ export default function FolderTree() {
   const navigate = useNavigate();
 
   const fetchTree = () => {
-    api.get('/folders')
-    .then(res => {
-      const normalized = res.data.map(folder => normalizeTree(folder, fetchTree));
-      setTree(normalized);
-      console.log(normalized)
-    })
-    .catch(err => console.error('Failed to fetch folders:', err));
-  }
+    Promise.all([api.get('/folders'), api.get('/decks/')])
+      .then(([folderRes, deckRes]) => {
+        const folders = folderRes.data;
+        const decks = deckRes.data;
+        const normalized = normalizeAll(folders, decks, fetchTree);
+        setTree(normalized);
+        console.log(normalized)
+      })
+      .catch(err => console.error('Failed to fetch tree:', err));
+  };
   
   useEffect(fetchTree, []);
 
