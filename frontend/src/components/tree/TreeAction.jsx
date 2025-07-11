@@ -10,19 +10,17 @@ import { deleteFolder, updateFolder } from '../../routes/FolderRoutes';
 import { AddPopover } from './AddPopover';
 
 export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, startTransition, anchorEl, setAnchorEl}) => {
-	// const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
-  const handleUpdate = async () => {
+	const handleUpdate = async () => {
 		console.log('hi');
 		
 		if (item.type === 'folder') {
@@ -36,39 +34,39 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 		startTransition(() => {
 			setEdit(false);
 		});
-  };
+	};
 
-  const handleDelete = () => {
+	const handleDelete = () => {
 		if (item.type === 'folder') {
 			const folderId = item.id.replace('folder-', '');
 			deleteFolder(folderId, item.fetchTree);
 		}
-  };
+	};
 
-  return (
-	  <Box className="tree-actions" sx={{ display: 'none', gap: 0.5 }}>
+	return (
+		<Box className="tree-actions" sx={{ display: 'none', gap: 0.5 }}>
 
-		<IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }} aria-describedby={action}
-		  onClick={(e) => {
-				e.stopPropagation();
-				console.log(`${action} ${item.id}`);
-				if (action === 'add') handleClick(e)
-				if (action === 'edit') {
-					setEditLabel(item.label);
-					setEdit(true);
-				}
-				if (action === 'save') handleUpdate(false);
-				if (action === 'delete') handleDelete();
-		  }}
-		>
-		  {action === 'add' ? <AddBoxRoundedIcon /> : null}
-		  {action === 'edit' ? <EditRoundedIcon /> : null}
-		  {action === 'save' ? <SaveRoundedIcon /> : null}
-		  {action === 'delete' ? <DeleteRoundedIcon /> : null}
-		</IconButton>
+			<IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }} aria-describedby={action}
+				onClick={(e) => {
+					e.stopPropagation();
+					console.log(`${action} ${item.id}`);
+					if (action === 'add') handleClick(e)
+					if (action === 'edit') {
+						setEditLabel(item.label);
+						setEdit(true);
+					}
+					if (action === 'save') handleUpdate(false);
+					if (action === 'delete') handleDelete();
+				}}
+			>
+				{action === 'add' ? <AddBoxRoundedIcon /> : null}
+				{action === 'edit' ? <EditRoundedIcon /> : null}
+				{action === 'save' ? <SaveRoundedIcon /> : null}
+				{action === 'delete' ? <DeleteRoundedIcon /> : null}
+			</IconButton>
+		
+			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} /> : null}
 
-		<AddPopover open={open} anchorEl={anchorEl} handleClose={handleClose} />
-
-	  </Box>
+		</Box>
 	);
 }
