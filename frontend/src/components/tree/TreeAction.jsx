@@ -8,11 +8,13 @@ import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 
 import { deleteFolder, updateFolder } from '../../routes/FolderRoutes';
 import { AddPopover } from './AddPopover';
+import DeleteDialog from './DeleteDialog';
 
 export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, startTransition, anchorEl, setAnchorEl}) => {
 	const open = Boolean(anchorEl);
+	const [deleteOpen, setDeleteOpen] = useState(false);
 
-	const handleClick = (event) => {
+	const handleAddClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -37,10 +39,12 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 	};
 
 	const handleDelete = () => {
-		if (item.type === 'folder') {
-			const folderId = item.id.replace('folder-', '');
-			deleteFolder(folderId, item.fetchTree);
-		}
+	 	setDeleteOpen(true);
+
+		// if (item.type === 'folder') {
+		// 	const folderId = item.id.replace('folder-', '');
+		// 	deleteFolder(folderId, item.fetchTree);
+		// }
 	};
 
 	return (
@@ -50,7 +54,7 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 				onClick={(e) => {
 					e.stopPropagation();
 					console.log(`${action} ${item.id}`);
-					if (action === 'add') handleClick(e)
+					if (action === 'add') handleAddClick(e)
 					if (action === 'edit') {
 						setEditLabel(item.label);
 						setEdit(true);
@@ -66,6 +70,8 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 			</IconButton>
 		
 			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} fetchTree={item.fetchTree} /> : null}
+
+			{action === 'delete' ? <DeleteDialog itemId={item.id} open={deleteOpen} setOpen={setDeleteOpen} fetchTree={item.fetchTree} /> : null}
 
 		</Box>
 	);

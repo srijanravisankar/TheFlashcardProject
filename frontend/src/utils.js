@@ -11,6 +11,7 @@ export const normalizeTree = (folder, fetchTree) => {
         id: `deck-${deck.id}`,
         label: `${deck.label}`,
         type: 'deck',
+        fetchTree,
         children: []
       })) ?? [])
     ]
@@ -27,6 +28,7 @@ export const normalizeAll = (folders = [], decks = [], fetchTree) => {
       id: `deck-${deck.id}`,
       label: deck.label,
       type: 'deck',
+      fetchTree,
       children: [],
     }));
 

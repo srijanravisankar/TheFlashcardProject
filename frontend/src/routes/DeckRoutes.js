@@ -18,3 +18,10 @@ export const updateDeck = (id, fetchTree) => {
       .then(() => fetchTree())
       .catch((err) => console.error('Failed to update deck:', err));
 }
+
+export const deleteDeck = (id, fetchTree) => {
+    api
+      .delete(`/decks/${id}`)
+      .then(() => fetchTree())
+      .catch((err) => console.error('Failed to delete deck:', err));
+}
