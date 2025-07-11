@@ -40,6 +40,7 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   } = useTreeItem({ id, type, itemId, children, label, disabled, rootRef: ref });
 
   const item = useTreeItemModel(itemId);
+  console.log(item.label)
 
   return (
     <TreeItemProvider {...getContextProviderProps()}>

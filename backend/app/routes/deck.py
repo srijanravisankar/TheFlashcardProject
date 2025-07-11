@@ -40,6 +40,16 @@ def get_decks(session: Session = Depends(get_db)):
     
     return decks
 
+# Get all the root decks from the 'deck' table
+@router.get("/root", response_model=List[schemas.DeckResponse])
+def get_root_decks(session: Session = Depends(get_db)):    
+    stmt = select(models.Deck).where(models.Deck.folder_id == None)
+    result = session.scalars(stmt)
+    decks = result.all()
+    print(decks)
+    
+    return decks
+
 # Get a deck from the 'deck' table given its given
 @router.get("/{id}", response_model=schemas.DeckResponse)
 def get_deck(id: int, session: Session = Depends(get_db)):

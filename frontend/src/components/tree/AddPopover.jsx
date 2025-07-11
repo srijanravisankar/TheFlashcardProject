@@ -1,15 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Popover, ButtonGroup, Box, MenuItem, Menu, TextField, IconButton } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import AddIcon from '@mui/icons-material/Add';
 
-export const AddPopover = ({ itemId, popoverOpen, anchorEl, handlePopoverClose }) => {
+import { addFolder } from '../../routes/FolderRoutes';
+import { addDeck } from '../../routes/DeckRoutes';
+
+export const AddPopover = ({ itemId, popoverOpen, anchorEl, handlePopoverClose, fetchTree }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+	const [newLabel, setNewLabel] = useState('untitled');
+	const inputRef = useRef(null);
   const options = ['FOLDER', 'DECK'];
+	const [addType, setAddType] = useState(options[selectedIndex]);
+
+	useEffect(() => {
+		if (popoverOpen) {
+			const timer = setTimeout(() => {
+				inputRef.current?.focus();
+			}, 0); 
+			return () => clearTimeout(timer);
+		}
+	}, [popoverOpen]);
 
 	const handleClick = () => {
+		const folderId = itemId.replace('folder-', '');
 
+		if (addType === 'FOLDER') addFolder(folderId, newLabel, fetchTree);
+		else if (addType === 'DECK') addDeck(folderId, newLabel, fetchTree);
+
+		handlePopoverClose();
 	}
 
   const handleMenuOpen = (event) => {
@@ -22,6 +42,7 @@ export const AddPopover = ({ itemId, popoverOpen, anchorEl, handlePopoverClose }
 
   const handleMenuItemClick = (index) => {
     setSelectedIndex(index);
+		setAddType(options[index])
     handleMenuClose();
   };
 
@@ -62,12 +83,14 @@ export const AddPopover = ({ itemId, popoverOpen, anchorEl, handlePopoverClose }
 
         <TextField
           id="standard-basic"
-          // label="Name"
 					placeholder="Name"
+					inputRef={inputRef}
 					autoFocus
-          variant="filled"
+          variant="standard"
           size="small"
+					defaultValue={newLabel}
           sx={{ "& .MuiInputBase-input": { fontSize: 15, height: 14, padding: 1, width: 120, px: 0.5 } }}
+					onChange={(e) => setNewLabel(e.target.value)}
         />
 
 				<IconButton sx={{ p: 0.5, color: "black", marginLeft: -0.5, py: 0.1 }} onClick={handleClick}><AddIcon /></IconButton>

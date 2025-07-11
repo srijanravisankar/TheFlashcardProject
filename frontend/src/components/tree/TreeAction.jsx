@@ -65,7 +65,7 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 				{action === 'delete' ? <DeleteRoundedIcon /> : null}
 			</IconButton>
 		
-			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} /> : null}
+			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} fetchTree={item.fetchTree} /> : null}
 
 		</Box>
 	);
