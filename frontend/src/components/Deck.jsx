@@ -7,6 +7,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
+import ReportIcon from '@mui/icons-material/Report';
 
 import api from '../api';
 
@@ -70,7 +71,10 @@ export default function Deck() {
       {
         cards === null ?  <CircularProgress sx={{ color: 'black' }} /> : (
           cards.length === 0 ? (
-            <Typography>No cards found.</Typography>
+            <Box sx={{display: 'flex', alignItems: 'center', gap: 1, marginBottom: "45px"}}>
+              <ReportIcon size="large" sx={{fontSize: 35}} />
+              <Typography sx={{fontSize: "18px"}}>No cards found.</Typography>
+            </Box>
           ) : (
             cards.map((card) => (
               <Paper key={card.id} onClick={() => console.log('card clicked', card.id)} sx={paperStyle}>

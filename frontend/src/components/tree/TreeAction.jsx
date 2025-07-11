@@ -7,6 +7,7 @@ import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 
 import { updateFolder } from '../../routes/FolderRoutes';
+import { updateDeck } from '../../routes/DeckRoutes';
 import { AddPopover } from './AddPopover';
 import DeleteDialog from './DeleteDialog';
 
@@ -27,15 +28,13 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 		
 		if (item.type === 'folder') {
 			const folderId = item.id.replace('folder-', '');
-			await updateFolder(folderId, editLabel, item.fetchTree, setEdit);
+			await updateFolder(folderId, editLabel, item.fetchTree);
 		} else if (item.type === 'deck') {
 			const deckId = item.id.replace('deck-', '');
-			updateDeck(deckId, item.label, item.fetchTree);
+			await updateDeck(deckId, editLabel, item.fetchTree);
 		}
 
-		startTransition(() => {
-			setEdit(false);
-		});
+		setTimeout(() => setEdit(false), 50);
 	};
 
 	const handleDelete = () => {
@@ -54,7 +53,9 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 						setEditLabel(item.label);
 						setEdit(true);
 					}
-					if (action === 'save') handleUpdate(false);
+					if (action === 'save') {
+						handleUpdate(false);
+					}
 					if (action === 'delete') handleDelete();
 				}}
 			>

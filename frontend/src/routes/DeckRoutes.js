@@ -12,11 +12,15 @@ export const addDeck = async (id, label, fetchTree) => {
         .catch((err) => console.error('Failed to add deck:', err));
 }
 
-export const updateDeck = (id, fetchTree) => {
-    api
-      .delete(`/decks/${id}`)
-      .then(() => fetchTree())
-      .catch((err) => console.error('Failed to update deck:', err));
+export const updateDeck = async (id, label, fetchTree) => {
+    return api
+      .put(`/decks/${id}`, {
+          label: label
+        })
+        .then(() => {
+          fetchTree();
+        })
+        .catch((err) => console.error('Failed to update deck:', err));
 }
 
 export const deleteDeck = (id, fetchTree) => {

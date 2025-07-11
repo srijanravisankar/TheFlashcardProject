@@ -2,14 +2,13 @@ import api from "../api";
 
 export const addFolder = async (id, label, fetchTree) => {
   return api
-      .post(`/folders`, {
-          label: label,
-          parent_id: id
+      .put(`/folders/${id}`, {
+          label: label
         })
         .then(() => {
           fetchTree();
         })
-        .catch((err) => console.error('Failed to add folder:', err));
+        .catch((err) => console.error('Failed to update folder:', err));
 }
 
 export const updateFolder = async (id, label, fetchTree) => {
