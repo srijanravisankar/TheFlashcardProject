@@ -23,7 +23,7 @@ export const normalizeAll = (folders = [], decks = [], fetchTree) => {
   const folderNodes = folders.map(folder => normalizeTree(folder, fetchTree));
 
   const topLevelDecks = decks
-    .filter(deck => !deck.folder_id) // include only decks without folder
+    .filter(deck => !deck.folder_id)
     .map(deck => ({
       id: `deck-${deck.id}`,
       label: deck.label,

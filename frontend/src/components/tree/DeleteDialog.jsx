@@ -10,11 +10,6 @@ import { deleteFolder } from '../../routes/FolderRoutes';
 import { deleteDeck } from '../../routes/DeckRoutes';
 
 export default function DeleteDialog({itemId, open, setOpen, fetchTree}) {
-//   const [open, setOpen] = React.useState(false);
-
-//   const handleClickOpen = () => {
-//     setOpen(true);
-//   };
 
 	const deleteItem = () => {
 		if (itemId.startsWith('folder')) {

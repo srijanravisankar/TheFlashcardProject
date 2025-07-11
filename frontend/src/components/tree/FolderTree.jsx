@@ -6,7 +6,7 @@ import { Box, CircularProgress } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
 import api from '../../api';
-import { normalizeTree, normalizeAll } from '../../utils';
+import { normalizeAll } from '../../utils';
 import { CustomTreeItem } from './CustormTreeItem';
 
 export default function FolderTree() {

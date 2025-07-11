@@ -6,7 +6,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 
-import { deleteFolder, updateFolder } from '../../routes/FolderRoutes';
+import { updateFolder } from '../../routes/FolderRoutes';
 import { AddPopover } from './AddPopover';
 import DeleteDialog from './DeleteDialog';
 
@@ -40,11 +40,6 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 
 	const handleDelete = () => {
 	 	setDeleteOpen(true);
-
-		// if (item.type === 'folder') {
-		// 	const folderId = item.id.replace('folder-', '');
-		// 	deleteFolder(folderId, item.fetchTree);
-		// }
 	};
 
 	return (
