@@ -10,10 +10,8 @@ import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import ReportIcon from '@mui/icons-material/Report';
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 
-import api from '../api';
-
 import { getDeck } from '../routes/DeckRoutes';
-import { getCards } from '../routes/CardRoutes';
+import { addCard, getCards, updateCard, deleteCard } from '../routes/CardRoutes';
 
 export default function Deck() {
   const { deckId } = useParams();
@@ -41,40 +39,24 @@ export default function Deck() {
     fetchData();
   }, [deckId]);
 
-
-  const createCard = (updatedCard) => {
-    api
-      .post(`/cards`, {
-          deck_id: updatedCard.deckId, 
-          front_text: updatedCard.frontText, 
-          back_text: updatedCard.backText
-        })
-      .then(() => {
-        getCards();
-        setCreate(false);
-      })
-      .catch((err) => console.error('Failed to create card:', err));
+  const handleCreate = async (card) => {
+    await addCard(card);
+    const cardRes = await getCards(deckId);
+    setCards(cardRes.data);
+    setCreate(false);
   }
 
-  const deleteCard = (id) => {
-    api
-      .delete(`/cards/${id}`)
-      .then(() => getCards())
-      .catch((err) => console.error('Failed to delete card:', err));
+  const handleDelete = async (id) => {
+    await deleteCard(id);
+    const cardRes = await getCards(deckId);
+    setCards(cardRes.data);
   }
 
-  const updateCard = (id, updatedCard) => {
-    api
-      .put(`/cards/${id}`, {
-          deck_id: updatedCard.deckId, 
-          front_text: updatedCard.frontText, 
-          back_text: updatedCard.backText
-        })
-      .then(() => {
-        getCards();
-        setEditCardId(null);
-      })
-      .catch((err) => console.error('Failed to update card:', err));
+  const handleUpdate = async (id, updatedCard) => {
+    await updateCard(id, updatedCard);
+    const cardRes = await getCards(deckId);
+    setCards(cardRes.data);
+    setEditCardId(null);
   }
 
   return (
@@ -95,7 +77,7 @@ export default function Deck() {
             </Box>
           ) : (
             cards.map((card) => (
-              <Paper key={card.id} onClick={() => console.log('card clicked', card.id)} sx={paperStyle}>
+              <Paper key={card.id} sx={paperStyle}>
                 {editCardId !== card.id ? <>
                     <Box sx={editCardStyle}>
                       <Typography><strong>Q:</strong> {card.front_text}</Typography>
@@ -106,7 +88,7 @@ export default function Deck() {
                             setFrontText(card.front_text);
                             setBackText(card.back_text);
                           }}><EditRoundedIcon sx={{ color: 'black' }} /></IconButton>
-                        <IconButton onClick={() => deleteCard(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => handleDelete(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
                       </Box>
                     </Box>
                   </> : <>
@@ -114,8 +96,8 @@ export default function Deck() {
                       <TextField label="Front text" defaultValue={frontText} onChange={(e) => setFrontText(e.target.value)} autoFocus />
                       <TextField label="Back text" defaultValue={backText} onChange={(e) => setBackText(e.target.value)} />
                       <Box>
-                        <IconButton onClick={() => updateCard(card.id, {deckId, frontText, backText})}><SaveRoundedIcon sx={{ color: 'black' }} /></IconButton>
-                        <IconButton onClick={() => deleteCard(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => handleUpdate(card.id, {deckId, frontText, backText})}><SaveRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => handleDelete(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
                       </Box>
                     </Box>
                   </>
@@ -132,7 +114,7 @@ export default function Deck() {
           <TextField label="Front text" onChange={(e) => setFrontText(e.target.value)} sx={{ color: 'black' }} />
           <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} sx={{ outline: 'black' }} />
           <Box>
-            <IconButton onClick={() => createCard({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
+            <IconButton onClick={() => handleCreate({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
             <IconButton onClick={() => setCreate(false)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
           </Box>
         </Box></Paper>}
@@ -149,7 +131,7 @@ export default function Deck() {
 const paperStyle = {
   padding: 2, 
   marginBottom: 2, 
-  backgroundColor: '#f9f9f9', 
+  backgroundColor: '#F6F6F6', 
   boxShadow: 8, 
   cursor: 'pointer',
   '&:hover': { boxShadow: 3 }

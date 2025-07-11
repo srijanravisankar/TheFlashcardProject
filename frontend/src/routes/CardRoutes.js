@@ -1,13 +1,11 @@
 import api from "../api";
 
-export const addCard = async (id, label, fetchTree) => {
+export const addCard = async (card) => {
     return api
       .post(`/cards`, {
-          label: label,
-          folder_id: id
-        })
-        .then(() => {
-          fetchTree();
+          front_text: card.frontText,
+          back_text: card.backText,
+          deck_id: card.deckId
         })
         .catch((err) => console.error('Failed to add card:', err));
 }
@@ -24,20 +22,18 @@ export const getCard = async (id) => {
           .catch((err) => console.error('Failed to fetch card:', err));
 }
 
-export const updateCard = async (id, label, fetchTree) => {
+export const updateCard = async (id, card) => {
     return api
       .put(`/cards/${id}`, {
-          label: label
-        })
-        .then(() => {
-          fetchTree();
+          front_text: card.frontText,
+          back_text: card.backText,
+          deck_id: card.deckId
         })
         .catch((err) => console.error('Failed to update card:', err));
 }
 
-export const deleteCard = (id, fetchTree) => {
-    api
+export const deleteCard = async (id) => {
+    return api
       .delete(`/cards/${id}`)
-      .then(() => fetchTree())
       .catch((err) => console.error('Failed to delete card:', err));
 }
