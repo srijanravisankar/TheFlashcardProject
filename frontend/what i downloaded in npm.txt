@@ -6,3 +6,4 @@ npm install @mui/x-tree-view
 npm install @mui/material @emotion/react @emotion/styled
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 npm install @mui/x-data-grid
+npm install --save react-card-flip --legacy-peer-deps

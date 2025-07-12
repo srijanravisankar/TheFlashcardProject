@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { Box, Typography, Paper, CircularProgress, IconButton, TextField, Fab } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, IconButton, TextField, Fab, Button } from '@mui/material';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
@@ -9,12 +10,17 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import ReportIcon from '@mui/icons-material/Report';
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 
-import { getDeck } from '../routes/DeckRoutes';
-import { addCard, getCards, updateCard, deleteCard } from '../routes/CardRoutes';
+import api from '../../api';
+import { getDeck } from '../../routes/DeckRoutes';
+import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
+import CardDeleteDialog from './CardDeleteDialog';
 
 export default function Deck() {
   const { deckId } = useParams();
+  const navigate = useNavigate();
 
   const [cards, setCards] = useState(null);
   const [editCardId, setEditCardId] = useState(null);
@@ -22,6 +28,13 @@ export default function Deck() {
   const [frontText, setFrontText] = useState('');
   const [backText, setBackText] = useState('');
   const [deckInfo, setDeckInfo] = useState(null);
+	const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const fetchCards = () => {
+    api.get('/cards')
+      .then(res => setCards(res.data))
+      .catch(err => console.error('Failed to fetch cards:', err));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,10 +59,8 @@ export default function Deck() {
     setCreate(false);
   }
 
-  const handleDelete = async (id) => {
-    await deleteCard(id);
-    const cardRes = await getCards(deckId);
-    setCards(cardRes.data);
+  const handleDelete = async () => {
+    setDeleteOpen(true);
   }
 
   const handleUpdate = async (id, updatedCard) => {
@@ -59,13 +70,21 @@ export default function Deck() {
     setEditCardId(null);
   }
 
+  const handleStudy = () => {
+    navigate(`/decks/${deckId}/flashcards/1`);
+  }
+
   return (
     <Box sx={{ padding: 2 }}>
-      <Box sx={{display: 'flex', alignItems: 'center', gap: 2, marginBottom: "18px"}}>
-        <LayersRoundedIcon sx={{fontSize: '30px'}} />
-        <h2>
-          {deckInfo?.data.label || null}
-        </h2>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <LayersRoundedIcon sx={{ fontSize: '30px' }} />
+          <h2>{deckInfo?.data.label || null}</h2>
+        </Box>
+        <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
+          <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
+          Study
+        </Button>
       </Box>
 
       {
@@ -102,6 +121,8 @@ export default function Deck() {
                     </Box>
                   </>
                 }
+
+                <CardDeleteDialog itemId={card.id} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} />
               </Paper>
             ))
           )
@@ -115,7 +136,7 @@ export default function Deck() {
           <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} sx={{ outline: 'black' }} />
           <Box>
             <IconButton onClick={() => handleCreate({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
-            <IconButton onClick={() => setCreate(false)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
+            <IconButton onClick={() => setCreate(false)}><CancelIcon sx={{ color: 'black' }} /></IconButton>
           </Box>
         </Box></Paper>}
 

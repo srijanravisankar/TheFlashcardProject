@@ -32,8 +32,9 @@ export const updateCard = async (id, card) => {
         .catch((err) => console.error('Failed to update card:', err));
 }
 
-export const deleteCard = async (id) => {
+export const deleteCard = async (id, fetchCards) => {
     return api
       .delete(`/cards/${id}`)
+      .then(() => fetchCards())
       .catch((err) => console.error('Failed to delete card:', err));
 }

@@ -5,7 +5,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 
 import FolderTree from './components/tree/FolderTree.jsx';
-import Deck from './components/Deck.jsx';
+import Deck from './components/deck/Deck.jsx';
+import Flashcard from './components/flashcard/Flashcard.jsx';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: '/decks/:deckId',
     element: <Deck />
+  },
+  {
+    path: '/decks/:deckId/flashcards/:flashcardId',
+    element: <Flashcard />
   }
 ]);
 
