@@ -1,0 +1,32 @@
+1. Create a Scheduler object: This is the core engine that determines scheduling behavior, due dates, stability updates, etc.
+2. Create a Card object and add it to the database: When a user creates a new card, you instantiate a Card, which starts in the Learning state. (can postgres save card as a python dict?)
+3. User studies the card and selects a rating: user gives a rating from the frontend like easy, good, hard or again. (but, how do i determine which card to display? there will be many cards to review right?)
+4. Pass the card, rating, and timestamp to the scheduler: The scheduler will update:
+    card.state: Learning, Review, or Relearning
+    card.step: Current step in learning/relearning
+    card.stability and card.difficulty: Memory model parameters
+    card.due: 📅 next due time
+    card.last_review: ⏰ When the review happened
+5. Store the updated card (and optionally review log) back to the DB
+
+important info about when to show a card:
+show only if card.due <= now.
+FSRS (like Anki) breaks learning into steps spaced out by time:
+    Learning: e.g. first step → 10 min later → next step
+    Relearning: after lapse, similar to Learning
+    Review: long-term scheduled reviews (days/months)
+If you show a card just because it's in Learning state, but it’s not due yet (i.e., the 10-minute wait isn’t over), you're going too early.
+
+use jsonb in postgresql 
+
+if i take time elapsed into account, but the user is in the page forgets to answer and comes back a lot later. will this significantly affect reviewing?
+
+
+from the backend, get all learning or relearning state cards from the backend that is having due date less than current time and sorted by due date
+Just keep a mental bookmark: if filtering, sorting, or session logic gets slow or messy later, split the core fields into columns.
+
+"Due" means the card is ready to be reviewed at or after that time, not before.
+
+i want to get cards that is in learning or relearning state AND their due are within current time.
+i also want to get cards that is in review state AND their due are within current time. (because i dont want to miss the review cards if their due dates falls below current time right?)
+then, i want to order the cards by their states. the learning cards should be first, then relearning cards, the review cards. then, i also want to order them by their due times.

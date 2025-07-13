@@ -1,7 +1,9 @@
 from fastapi import Query, status, APIRouter, Response, HTTPException, Depends
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, text
+
+from .. import study
 
 from .. import schemas, models
 
@@ -23,8 +25,12 @@ def create_card(card: schemas.CardCreate, session: Session = Depends(get_db)):
                             detail=f"Deck with id '{card.deck_id}' was not found")
     
     new_card = models.Flashcard(**card.model_dump())
-    
     session.add(new_card)
+    session.flush()
+    
+    fsrs_card = study.Card(card_id=new_card.id)
+    new_card.fsrs_state = fsrs_card.to_dict()
+    
     session.commit()
     session.refresh(new_card)
     
@@ -32,12 +38,32 @@ def create_card(card: schemas.CardCreate, session: Session = Depends(get_db)):
 
 # Get all the flashcards from the 'flashcard' table
 @router.get("/", response_model=List[schemas.CardResponse])
-def get_cards(deck_id: Optional[int] = Query(None), session: Session = Depends(get_db)):    
+def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Query(None), session: Session = Depends(get_db)):    
     stmt = select(models.Flashcard)
 
     if deck_id is not None:
         stmt = stmt.where(models.Flashcard.deck_id == deck_id)
+        
+        result = session.scalars(stmt)
+        return result.all()
 
+    if study is not None:
+        stmt = text(f"""
+            SELECT *
+            FROM flashcard
+            WHERE (fsrs_state->>'due')::timestamp <= NOW()
+            ORDER BY 
+            CASE (fsrs_state->>'state')::int
+                WHEN 1 THEN 1
+                WHEN 3 THEN 2
+                WHEN 2 THEN 3
+            END,
+            (fsrs_state->>'due')::timestamp;
+        """)
+            
+        cards = session.execute(stmt).fetchall()
+        return [session.get(models.Flashcard, card.id) for card in cards]
+    
     result = session.scalars(stmt)
     return result.all()
 

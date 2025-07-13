@@ -71,7 +71,7 @@ export default function Deck() {
   }
 
   const handleStudy = () => {
-    navigate(`/decks/${deckId}/flashcards/1`);
+    navigate(`/decks/${deckId}/flashcards/1`, {state: {cards}});
   }
 
   return (

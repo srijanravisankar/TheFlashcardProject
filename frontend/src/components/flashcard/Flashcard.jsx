@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Paper, Chip, Box } from '@mui/material';
 
 const Flashcard = () => {
   const [flipped, setFlipped] = useState(false);
+  const location = useLocation();
+  const cards = location.state?.cards;
+
+  const studyCards = 
+
+  console.log(cards);
 
   const handleClick = () => {
 
@@ -14,26 +21,26 @@ const Flashcard = () => {
     <StyledWrapper>
       <div className="card" onClick={() => setFlipped(!flipped)}>
         <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
-          <Paper className="card-front">
+          <Paper className="card-front" sx={{boxShadow: 20, '&:hover': { boxShadow: 2 }}}>
             <p>Front Side</p>
           </Paper>
-          <Paper className="card-back">
+          <Paper className="card-back" sx={{boxShadow: 8, '&:hover': { boxShadow: 3 }}}>
             <p>Back Side</p>
           </Paper>
         </div>
       </div>
       <Box sx={{display: 'flex', gap: 2}}>
-        <Chip label="Again" onClick={handleClick} sx={{backgroundColor: 'rgb(40, 40, 40)', color: 'white', '&:hover': {backgroundColor: 'rgb(133, 133, 133)',}, }} />
-        <Chip label="Hard" onClick={handleClick} sx={{backgroundColor: 'rgb(40, 40, 40)', color: 'white', '&:hover': {backgroundColor: 'rgb(133, 133, 133)',}, }} />
-        <Chip label="Good" onClick={handleClick} sx={{backgroundColor: 'rgb(40, 40, 40)', color: 'white', '&:hover': {backgroundColor: 'rgb(133, 133, 133)',}, }} />
-        <Chip label="Easy" onClick={handleClick} sx={{backgroundColor: 'rgb(40, 40, 40)', color: 'white', '&:hover': {backgroundColor: 'rgb(133, 133, 133)',}, }} />
+        <Chip label="😟 Again" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+        <Chip label="😕 Hard" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+        <Chip label="😊 Good" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+        <Chip label="😎 Easy" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
       </Box>
     </StyledWrapper>
   );
 }
 
 const StyledWrapper = styled.div`
-  height: 100vh;
+  height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +59,7 @@ const StyledWrapper = styled.div`
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.6s;
+    transition: transform 0.3s;
   }
 
   .card-inner.flipped {
@@ -70,23 +77,18 @@ const StyledWrapper = styled.div`
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    border-radius: 10px;
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16),
-              0px 3px 6px rgba(0, 0, 0, 0.23);
-    transition: box-shadow 0.3s;
+    border-radius: 8px;
   }
 
   .card-front {
-    background-color: rgb(40, 40, 40);
+    background-color: black;
     color: #fff;
-    // border: 2px solid rgb(0, 0, 0);
     transform: rotateY(0deg);
   }
 
   .card-back {
     background-color: rgb(230, 230, 230);
     color: #000;
-    // border: 2px solid rgb(200, 200, 200);
     transform: rotateY(180deg);
   }
 `;

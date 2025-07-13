@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional
+from typing import List, Optional, Any
 
 # Folder -----------------------------------------------------------------------------------------
 class Folder(BaseModel):
@@ -43,6 +43,7 @@ class CardCreate(Card):
 
 class CardResponse(Card):
     id: int
+    fsrs_state: dict[str, Any]
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)
