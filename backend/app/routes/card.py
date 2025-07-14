@@ -52,7 +52,8 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
                 SELECT *
                 FROM flashcard
                 WHERE deck_id = :deck_id
-                AND (fsrs_state->>'due')::timestamp <= NOW()
+                AND ((fsrs_state->>'state')::int in (1, 3)
+                OR ((fsrs_state->>'state')::int = 2 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
                 ORDER BY 
                     CASE (fsrs_state->>'state')::int
                         WHEN 1 THEN 1
@@ -65,7 +66,8 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
             stmt = text("""
                 SELECT *
                 FROM flashcard
-                WHERE (fsrs_state->>'due')::timestamp <= NOW()
+                WHERE ((fsrs_state->>'state')::int in (1, 3)
+                OR ((fsrs_state->>'state')::int = 2 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
                 ORDER BY 
                     CASE (fsrs_state->>'state')::int
                         WHEN 1 THEN 1
