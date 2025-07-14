@@ -39,6 +39,7 @@ class Card(BaseModel):
     deck_id: int
     
 class CardCreate(Card):
+    fsrs_state: Optional[dict[str, int | float | str | None]] = None
     rating: Optional[int] = None
     pass
 

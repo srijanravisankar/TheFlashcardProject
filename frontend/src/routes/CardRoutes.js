@@ -23,16 +23,17 @@ export const getCard = async (id) => {
           .catch((err) => console.error('Failed to fetch card:', err));
 }
 
-export const updateCard = async (id, front_text, back_text, deck_id, rating = null) => {
+export const updateCard = async (id, front_text, back_text, deck_id, rating = null, study = false) => {
+  const apiRoute = study ? `/cards/${id}?study=${study}` : `/cards/${id}`;
   console.log(id, front_text, back_text, deck_id, rating)
-    return api
-      .put(`/cards/${id}`, {
-          front_text,
-          back_text,
-          deck_id,
-          rating
-        })
-        .catch((err) => console.error('Failed to update card:', err));
+  return api
+    .put(apiRoute, {
+        front_text,
+        back_text,
+        deck_id,
+        rating
+      })
+      .catch((err) => console.error('Failed to update card:', err));
 }
 
 export const deleteCard = async (id) => {

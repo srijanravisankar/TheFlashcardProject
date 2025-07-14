@@ -32,7 +32,7 @@ const Flashcard = () => {
 
     try {
       console.log(currentCard)
-      await updateCard(currentCard.id, currentCard.front_text, currentCard.back_text, deckId, rating);
+      await updateCard(currentCard.id, currentCard.front_text, currentCard.back_text, deckId, rating, true);
       fetchData()
       setFlipped(false);
     } catch (err) {

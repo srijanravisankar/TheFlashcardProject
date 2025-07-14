@@ -103,7 +103,7 @@ def get_card(id: int, session: Session = Depends(get_db)):
 
 # Update a flashcard in the 'flashcard' table given its id
 @router.put("/{id}", response_model=schemas.CardResponse)
-def update_card(id: int, update_card: schemas.CardCreate, session: Session = Depends(get_db)):
+def update_card(id: int, update_card: schemas.CardCreate, study: Optional[bool] = Query(None), session: Session = Depends(get_db)):
     # check for deck existence
     deck = session.get(models.Deck, update_card.deck_id)
     if deck is None:
@@ -117,7 +117,7 @@ def update_card(id: int, update_card: schemas.CardCreate, session: Session = Dep
                             detail=f"Card with id '{id}' was not found")
         
     # update FSRS state
-    if update_card.rating:
+    if study and update_card.rating is not None:
         rating = Rating.Again
         if update_card.rating == 2:
             rating = Rating.Hard
@@ -131,6 +131,11 @@ def update_card(id: int, update_card: schemas.CardCreate, session: Session = Dep
         new_fsrs_card, review_log = scheduler.review_card(old_fsrs_card, rating, now)  
         
         card.fsrs_state = new_fsrs_card.to_dict()
+    else:
+        fsrs_card = Card(card_id=card.id)
+        fsrs_card.difficulty = 5.0
+        fsrs_card.stability = 0.1
+        card.fsrs_state = fsrs_card.to_dict()
     
     update_data = update_card.model_dump(exclude_unset=True, exclude={"fsrs_state", "rating"})
     for key, value in update_data.items():
