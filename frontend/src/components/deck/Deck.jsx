@@ -29,11 +29,15 @@ export default function Deck() {
   const [backText, setBackText] = useState('');
   const [deckInfo, setDeckInfo] = useState(null);
 	const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteCardId, setDeleteCardId] = useState(null);
 
-  const fetchCards = () => {
-    api.get('/cards')
-      .then(res => setCards(res.data))
-      .catch(err => console.error('Failed to fetch cards:', err));
+  const fetchCards = async () => {
+    try {
+      const cardRes = await getCards(deckId);
+      setCards(cardRes.data);
+    } catch (err) {
+      console.error('Failed to fetch cards:', err);
+    }
   };
 
   useEffect(() => {
@@ -59,19 +63,20 @@ export default function Deck() {
     setCreate(false);
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async (cardId) => {
+    setDeleteCardId(cardId);
     setDeleteOpen(true);
   }
 
   const handleUpdate = async (id, updatedCard) => {
-    await updateCard(id, updatedCard);
+    await updateCard(id, updatedCard.frontText, updatedCard.backText, deckId);
     const cardRes = await getCards(deckId);
     setCards(cardRes.data);
     setEditCardId(null);
   }
 
   const handleStudy = () => {
-    navigate(`/decks/${deckId}/flashcards/1`, {state: {cards}});
+    navigate(`/decks/${deckId}/study`);
   }
 
   return (
@@ -121,13 +126,13 @@ export default function Deck() {
                     </Box>
                   </>
                 }
-
-                <CardDeleteDialog itemId={card.id} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} />
               </Paper>
             ))
           )
         )
       }
+
+      <CardDeleteDialog itemId={deleteCardId} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} />
 
       {!create ? <></> : 
       <Paper sx={paperStyle}>

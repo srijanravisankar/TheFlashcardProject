@@ -9,8 +9,11 @@ import { deleteCard } from '../../routes/CardRoutes';
 
 export default function CardDeleteDialog({itemId, open, setOpen, fetchCards}) {
 
+	console.log("deleted item with id: ", itemId);
 	const deleteItem = async () => {
+		console.log("deleted item with id!!!!!!: ", itemId);
 		await deleteCard(itemId, fetchCards);
+		await fetchCards();
 		setOpen(false);
 	}
 
@@ -37,18 +40,18 @@ export default function CardDeleteDialog({itemId, open, setOpen, fetchCards}) {
     },
   }}
 		>
-				<DialogTitle id="alert-dialog-title" sx={{margin: 0, padding: 0}}>
-					{"Delete Confirmation"}
-				</DialogTitle>
-				<DialogContent>
-						<DialogContentText id="alert-dialog-description" sx={{margin: 0, padding: 0, width: "250px"}}>
-								Are you sure want to delete?
-						</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-						<Button onClick={handleClose} sx={{color: "grey"}}>Cancel</Button>
-						<Button variant="contained" onClick={deleteItem} autoFocus sx={{backgroundColor: "black"}}>Delete</Button>
-				</DialogActions>
+			<DialogTitle id="alert-dialog-title" sx={{margin: 0, padding: 0}}>
+				{"Delete Confirmation"}
+			</DialogTitle>
+			<DialogContent>
+					<DialogContentText id="alert-dialog-description" sx={{margin: 0, padding: 0, width: "250px"}}>
+							Are you sure want to delete?
+					</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+					<Button onClick={handleClose} sx={{color: "grey"}}>Cancel</Button>
+					<Button variant="contained" onClick={deleteItem} autoFocus sx={{backgroundColor: "black"}}>Delete</Button>
+			</DialogActions>
 		</Dialog>
 	);
 }

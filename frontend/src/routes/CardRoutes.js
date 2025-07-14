@@ -10,9 +10,10 @@ export const addCard = async (card) => {
         .catch((err) => console.error('Failed to add card:', err));
 }
 
-export const getCards = async (id) => {
+export const getCards = async (id, study = null) => {
+  const apiRoute = study ? `/cards?deck_id=${id}&study=true` : `/cards?deck_id=${id}`;
   return api
-          .get(`/cards?deck_id=${id}`)
+          .get(apiRoute)
           .catch((err) => console.error('Failed to fetch cards:', err));
 }
 
@@ -22,19 +23,20 @@ export const getCard = async (id) => {
           .catch((err) => console.error('Failed to fetch card:', err));
 }
 
-export const updateCard = async (id, card) => {
+export const updateCard = async (id, front_text, back_text, deck_id, rating = null) => {
+  console.log(id, front_text, back_text, deck_id, rating)
     return api
       .put(`/cards/${id}`, {
-          front_text: card.frontText,
-          back_text: card.backText,
-          deck_id: card.deckId
+          front_text,
+          back_text,
+          deck_id,
+          rating
         })
         .catch((err) => console.error('Failed to update card:', err));
 }
 
-export const deleteCard = async (id, fetchCards) => {
+export const deleteCard = async (id) => {
     return api
       .delete(`/cards/${id}`)
-      .then(() => fetchCards())
       .catch((err) => console.error('Failed to delete card:', err));
 }

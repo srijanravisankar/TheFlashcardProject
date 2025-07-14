@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     element: <Deck />
   },
   {
-    path: '/decks/:deckId/flashcards/:flashcardId',
+    path: '/decks/:deckId/study',
     element: <Flashcard />
   }
 ]);

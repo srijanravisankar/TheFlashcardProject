@@ -1,43 +1,132 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+// import { useEffect, useState } from 'react';
+// import { useParams } from 'react-router-dom';
+// import styled from 'styled-components';
 
+// import { Paper, Chip, Box } from '@mui/material';
+
+// import { getCards } from '../../routes/CardRoutes';
+
+// const Flashcard = () => {
+//   const [flipped, setFlipped] = useState(false);
+//   const { deckId } = useParams();
+//   const [cards, setCards] = useState([])
+
+//   const fetchData = async () => {
+//     try {
+//       const cardRes = await getCards(deckId, true);
+//       setCards(cardRes.data);
+//     } catch (err) {
+//       console.error('Failed to fetch cards:', err);
+//     }
+//   }
+
+//   useEffect(() => {fetchData()}, [])
+
+//   console.log(cards);
+
+//   const handleClick = () => {
+
+//   }
+
+//   return (
+//     <StyledWrapper>
+//       <div className="card" onClick={() => setFlipped(!flipped)}>
+//         <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
+//           <Paper className="card-front" sx={{boxShadow: 20, '&:hover': { boxShadow: 2 }}}>
+//             <p>{`${cards && cards[0] ? cards[6].front_text : null}`}</p>
+//           </Paper>
+//           <Paper className="card-back" sx={{boxShadow: 8, '&:hover': { boxShadow: 3 }}}>
+//             <p>{`${cards && cards[0] ? cards[6].back_text : null}`}</p>
+//           </Paper>
+//         </div>
+//       </div>
+//       <Box sx={{display: 'flex', gap: 2}}>
+//         <Chip label="😟 Again" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+//         <Chip label="😕 Hard" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+//         <Chip label="😊 Good" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+//         <Chip label="😎 Easy" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
+//       </Box>
+//     </StyledWrapper>
+//   );
+// }
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { Paper, Chip, Box } from '@mui/material';
 
+import { getCards, updateCard } from '../../routes/CardRoutes';
+
 const Flashcard = () => {
+  const { deckId } = useParams();
+  const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState(false);
-  const location = useLocation();
-  const cards = location.state?.cards;
+  const [currentCard, setCurrentCard] = useState(null);
+  
+  const fetchData = async () => {
+      try {
+        const res = (await getCards(deckId, true)).data;
+        console.log(res);
+        setCards(res);
+        setCurrentCard(res[res.length - 1]);
+      } catch (err) {
+        console.error('Failed to fetch cards:', err);
+      }
+    };
 
-  const studyCards = 
+  // Fetch cards once
+  useEffect(() => {
+    fetchData();
+  }, [deckId]);
 
-  console.log(cards);
+  const handleChipClick = async (rating) => {
+    if (!currentCard) return;
 
-  const handleClick = () => {
+    try {
+      console.log(currentCard)
+      await updateCard(currentCard.id, currentCard.front_text, currentCard.back_text, deckId, rating);
+      fetchData()
+      // const updatedCards = (await getCards(deckId, true)).data;
 
-  }
+      // updatedCards.pop();
+      // const nextCard = updatedCards[updatedCards.length - 1] || null;
+
+      // setCards(updatedCards);
+      // setCurrentCard(nextCard);
+      setFlipped(false);
+    } catch (err) {
+      console.error('Failed to update card:', err);
+    }
+  };
 
   return (
     <StyledWrapper>
-      <div className="card" onClick={() => setFlipped(!flipped)}>
-        <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
-          <Paper className="card-front" sx={{boxShadow: 20, '&:hover': { boxShadow: 2 }}}>
-            <p>Front Side</p>
-          </Paper>
-          <Paper className="card-back" sx={{boxShadow: 8, '&:hover': { boxShadow: 3 }}}>
-            <p>Back Side</p>
-          </Paper>
-        </div>
-      </div>
-      <Box sx={{display: 'flex', gap: 2}}>
-        <Chip label="😟 Again" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
-        <Chip label="😕 Hard" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
-        <Chip label="😊 Good" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
-        <Chip label="😎 Easy" onClick={handleClick} sx={{backgroundColor: 'black', color: 'white', '&:hover': {backgroundColor: 'rgb(65, 65, 65)',}, borderRadius: '8px' }} />
-      </Box>
+      {currentCard ? (
+        <>
+          <div className="card" onClick={() => setFlipped(!flipped)}>
+            <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
+              <Paper className="card-front" sx={{ boxShadow: 20 }}>
+                <p>{currentCard.front_text}</p>
+              </Paper>
+              <Paper className="card-back" sx={{ boxShadow: 8 }}>
+                <p>{currentCard.back_text}</p>
+              </Paper>
+            </div>
+          </div>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Chip label="😟 Again" onClick={() => handleChipClick(1)} />
+            <Chip label="😕 Hard" onClick={() => handleChipClick(2)} />
+            <Chip label="😊 Good" onClick={() => handleChipClick(3)} />
+            <Chip label="😎 Easy" onClick={() => handleChipClick(4)} />
+          </Box>
+        </>
+      ) : (
+        <h2>All done! 🎉</h2>
+      )}
     </StyledWrapper>
   );
-}
+};
+
 
 const StyledWrapper = styled.div`
   height: 90vh;

@@ -56,11 +56,11 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
                 OR ((fsrs_state->>'state')::int = 2 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
                 ORDER BY 
                     CASE (fsrs_state->>'state')::int
-                        WHEN 1 THEN 1
+                        WHEN 2 THEN 1
                         WHEN 3 THEN 2
-                        WHEN 2 THEN 3
+                        WHEN 1 THEN 3
                     END,
-                    (fsrs_state->>'due')::timestamp;
+                    (fsrs_state->>'due')::timestamp DESC;
             """).bindparams(deck_id=deck_id)
         else:
             stmt = text("""
@@ -70,11 +70,11 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
                 OR ((fsrs_state->>'state')::int = 2 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
                 ORDER BY 
                     CASE (fsrs_state->>'state')::int
-                        WHEN 1 THEN 1
+                        WHEN 2 THEN 1
                         WHEN 3 THEN 2
-                        WHEN 2 THEN 3
+                        WHEN 1 THEN 3
                     END,
-                    (fsrs_state->>'due')::timestamp;
+                    (fsrs_state->>'due')::timestamp DESC;
             """)
         
         cards = session.execute(stmt).fetchall()
