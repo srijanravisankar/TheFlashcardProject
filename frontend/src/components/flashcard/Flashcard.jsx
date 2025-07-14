@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+
 import { Paper, Chip, Box } from '@mui/material';
+
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import MoodBadIcon from '@mui/icons-material/MoodBad';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 
 import { getCards, updateCard } from '../../routes/CardRoutes';
 
@@ -55,10 +61,17 @@ const Flashcard = () => {
             </div>
           </div>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Chip label="😟 Again" onClick={() => handleChipClick(1)} />
+            {/* <Chip label="😟 Again" onClick={() => handleChipClick(1)} />
             <Chip label="😕 Hard" onClick={() => handleChipClick(2)} />
-            <Chip label="😊 Good" onClick={() => handleChipClick(3)} />
-            <Chip label="😎 Easy" onClick={() => handleChipClick(4)} />
+            <Chip label="😊 Good" onClick={() => handleChipClick(3)} /> */}
+
+            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVeryDissatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Again</Box>} onClick={() => handleChipClick(1)} sx={{color: 'white', backgroundColor: 'black'}} />
+
+            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><MoodBadIcon sx={{fontSize: '18px', color: 'white'}}/> Hard</Box>} onClick={() => handleChipClick(2)} sx={{color: 'white', backgroundColor: 'black'}} />
+
+            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentSatisfiedAltIcon sx={{fontSize: '18px', color: 'white'}}/> Good</Box>} onClick={() => handleChipClick(3)} sx={{color: 'white', backgroundColor: 'black'}} />
+
+            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVerySatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Easy</Box>} onClick={() => handleChipClick(4)} sx={{color: 'white', backgroundColor: 'black'}} />
           </Box>
         </>
       ) : (

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
+
+import StyleIcon from '@mui/icons-material/Style';
 
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
@@ -9,6 +11,7 @@ import api from '../../api';
 import { normalizeAll } from '../../utils';
 import { CustomTreeItem } from './CustormTreeItem';
 import { TreeAction } from './TreeAction';
+import Loader from '../../Loader';
 
 export default function FolderTree() {
   const [tree, setTree] = useState(null);
@@ -41,20 +44,24 @@ export default function FolderTree() {
   };
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <h2>Srijan's FSRS App</h2>
-      {/* <Box sx={{ display: 'flex', gap: 0.5, marginLeft: 'auto' }}> */}
-      {
-        tree === null ?  <CircularProgress sx={{ color: 'black' }} /> : 
-        <>
+    <>
+      {tree === null ? 
+        <Box sx={{height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
+          <Loader />
+        </Box> :
+        <Box sx={{ padding: 2 }}>
+          <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5}}>
+            <StyleIcon sx={{fontSize: '33px'}} />
+            <h2>The Flashcard App</h2>
+          </Box>
           <RichTreeView
           items={tree}
           slots={{ item: CustomTreeItem }}
           onItemClick={handleItemClick}
           />
           <TreeAction action={'add'} anchorEl={anchorEl} setAnchorEl={setAnchorEl} fetchTree={fetchTree} />
-        </>
+        </Box>
       }
-    </Box>
+    </>
   );
 }

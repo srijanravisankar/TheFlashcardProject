@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Typography, Paper, CircularProgress, IconButton, TextField, Fab, Button } from '@mui/material';
+import { Box, Typography, Paper, IconButton, TextField, Fab, Button } from '@mui/material';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
@@ -16,6 +16,7 @@ import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import { getDeck } from '../../routes/DeckRoutes';
 import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
 import CardDeleteDialog from './CardDeleteDialog';
+import Loader from '../../Loader';
 
 export default function Deck() {
   const { deckId } = useParams();
@@ -75,20 +76,24 @@ export default function Deck() {
   }
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <LayersRoundedIcon sx={{ fontSize: '30px' }} />
-          <h2>{deckInfo?.data.label || null}</h2>
+    <>
+      {cards === null ? 
+        <Box sx={{height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
+          <Loader />
+        </Box> :
+      <Box sx={{ padding: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LayersRoundedIcon sx={{ fontSize: '30px' }} />
+            <h2>{deckInfo?.data.label || null}</h2>
+          </Box>
+          <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
+            <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
+            Study
+          </Button>
         </Box>
-        <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
-          <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
-          Study
-        </Button>
-      </Box>
 
-      {
-        cards === null ?  <CircularProgress sx={{ color: 'black' }} /> : (
+        {(
           cards.length === 0 ? (
             <Box sx={{display: 'flex', alignItems: 'center', gap: 1, marginBottom: "35px"}}>
               <ReportIcon size="large" sx={{fontSize: 35}} />
@@ -121,31 +126,32 @@ export default function Deck() {
                     </Box>
                   </>
                 }
-              </Paper>
-            ))
+            </Paper>
+          ))
           )
-        )
+        )}
+
+        <CardDeleteDialog itemId={deleteCardId} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} setDeleteCardId={setDeleteCardId} />
+
+        {!create ? <></> : 
+        <Paper sx={paperStyle}>
+          <Box sx={editCardStyle}>
+            <TextField label="Front text" onChange={(e) => setFrontText(e.target.value)} sx={{ color: 'black' }} />
+            <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} sx={{ outline: 'black' }} />
+            <Box>
+              <IconButton onClick={() => handleCreate({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
+              <IconButton onClick={() => setCreate(false)}><CancelIcon sx={{ color: 'black' }} /></IconButton>
+            </Box>
+          </Box></Paper>}
+
+        {cards === null ? <></> : 
+          <Fab aria-label="add" size="medium" onClick={() => setCreate(true)} disabled={create}
+            sx={{backgroundColor: 'black', color: 'white', marginTop: '20px', '&:hover': {backgroundColor: '#333'}}}>
+          <AddRoundedIcon />
+          </Fab> }
+      </Box>
       }
-
-      <CardDeleteDialog itemId={deleteCardId} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} setDeleteCardId={setDeleteCardId} />
-
-      {!create ? <></> : 
-      <Paper sx={paperStyle}>
-        <Box sx={editCardStyle}>
-          <TextField label="Front text" onChange={(e) => setFrontText(e.target.value)} sx={{ color: 'black' }} />
-          <TextField label="Back text" onChange={(e) => setBackText(e.target.value)} sx={{ outline: 'black' }} />
-          <Box>
-            <IconButton onClick={() => handleCreate({deckId, frontText, backText})}><AddBoxRoundedIcon sx={{ color: 'black' }} /></IconButton>
-            <IconButton onClick={() => setCreate(false)}><CancelIcon sx={{ color: 'black' }} /></IconButton>
-          </Box>
-        </Box></Paper>}
-
-      {cards === null ? <></> : 
-        <Fab aria-label="add" size="medium" onClick={() => setCreate(true)} disabled={create}
-          sx={{backgroundColor: 'black', color: 'white', marginTop: '20px', '&:hover': {backgroundColor: '#333'}}}>
-        <AddRoundedIcon />
-        </Fab> }
-    </Box>
+    </>
   );
 }
 
