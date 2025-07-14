@@ -24,7 +24,7 @@ export const AddPopover = ({ itemId, popoverOpen, anchorEl, handlePopoverClose, 
 	}, [popoverOpen]);
 
 	const handleClick = () => {
-		const folderId = itemId.replace('folder-', '');
+		const folderId = itemId?.replace('folder-', '') ?? null;
 
 		if (addType === 'FOLDER') addFolder(folderId, newLabel, fetchTree);
 		else if (addType === 'DECK') addDeck(folderId, newLabel, fetchTree);

@@ -11,7 +11,7 @@ import { updateDeck } from '../../routes/DeckRoutes';
 import { AddPopover } from './AddPopover';
 import DeleteDialog from './DeleteDialog';
 
-export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, startTransition, anchorEl, setAnchorEl}) => {
+export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, anchorEl, setAnchorEl, setDeleteCardId, fetchTree}) => {
 	const open = Boolean(anchorEl);
 	const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -38,16 +38,16 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 	};
 
 	const handleDelete = () => {
+		setDeleteCardId(item.id);
 	 	setDeleteOpen(true);
 	};
 
 	return (
-		<Box className="tree-actions" sx={{ display: 'none', gap: 0.5 }}>
+		<Box className="tree-actions" sx={{ display: item ? 'none' : 'block', gap: 0.5, ...(item ? {} : {paddingLeft: '28px', paddingTop: '5px'}) }}>
 
 			<IconButton edge="end" size="small" sx={{ marginLeft: 'auto', color: 'gray' }} aria-describedby={action}
 				onClick={(e) => {
 					e.stopPropagation();
-					console.log(`${action} ${item.id}`);
 					if (action === 'add') handleAddClick(e)
 					if (action === 'edit') {
 						setEditLabel(item.label);
@@ -59,15 +59,15 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 					if (action === 'delete') handleDelete();
 				}}
 			>
-				{action === 'add' ? <AddBoxRoundedIcon /> : null}
-				{action === 'edit' ? <EditRoundedIcon /> : null}
-				{action === 'save' ? <SaveRoundedIcon /> : null}
-				{action === 'delete' ? <DeleteRoundedIcon /> : null}
+				{action === 'add' ? <AddBoxRoundedIcon sx={{...(!item ? {fontSize: '20px'} : {fontSize: '20px'})}} /> : null}
+				{action === 'edit' ? <EditRoundedIcon sx={{fontSize: '20px'}} /> : null}
+				{action === 'save' ? <SaveRoundedIcon sx={{fontSize: '20px'}} /> : null}
+				{action === 'delete' ? <DeleteRoundedIcon sx={{fontSize: '20px'}} /> : null}
 			</IconButton>
 		
-			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} fetchTree={item.fetchTree} /> : null}
+			{action === 'add' ? <AddPopover id='add' itemId={item?.id ?? null} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} fetchTree={item?.fetchTree ?? fetchTree} /> : null}
 
-			{action === 'delete' ? <DeleteDialog itemId={item.id} open={deleteOpen} setOpen={setDeleteOpen} fetchTree={item.fetchTree} itemLabel={item.label} itemType={item.type} /> : null}
+			{action === 'delete' ? <DeleteDialog itemId={item.id} open={deleteOpen} setOpen={setDeleteOpen} fetchTree={item.fetchTree} itemLabel={item.label} itemType={item.type} setDeleteCardId={setDeleteCardId} /> : null}
 
 		</Box>
 	);

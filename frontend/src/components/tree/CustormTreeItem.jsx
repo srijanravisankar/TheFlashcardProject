@@ -26,6 +26,7 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
   const [editLabel, setEditLabel] = useState('');
   const [isPending, startTransition] = useTransition();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [deleteCardId, setDeleteCardId] = useState(null);
 
   const {
     getContextProviderProps,
@@ -54,15 +55,16 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
             },
             display: 'flex',
             alignItems: 'center',
-            height: 33
+            height: 33,
+            ...(item.id === deleteCardId ? {backgroundColor: '#d5d5d5ff'} : {})
           }}>
 
-          <TreeItemIconContainer {...getIconContainerProps()}>
+          <TreeItemIconContainer {...getIconContainerProps()} >
             <TreeItemIcon status={status} />
           </TreeItemIconContainer>
 
           <Box sx={{ flexGrow: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
-            {item.type === 'folder' ? <FolderRoundedIcon /> : <LayersRoundedIcon />}
+            {item.type === 'folder' ? <FolderRoundedIcon sx={{fontSize: '20px'}} /> : <LayersRoundedIcon sx={{fontSize: '22px'}} />}
             <TreeItemCheckbox {...getCheckboxProps()} />
 
             {!edit ? <TreeItemLabel {...getLabelProps()} /> :
@@ -75,9 +77,9 @@ export const CustomTreeItem = forwardRef(function CustomTreeItem(props, ref) {
               {item.type === 'folder' ? <TreeAction item={item} action={'add'} anchorEl={anchorEl} setAnchorEl={setAnchorEl} /> : null}
 
               {!edit ? <TreeAction item={item} action={'edit'} setEdit={setEdit} setEditLabel={setEditLabel} /> : 
-              <TreeAction item={item} action={'save'} setEdit={setEdit} editLabel={editLabel} startTransition={startTransition} />}
+              <TreeAction item={item} action={'save'} setEdit={setEdit} editLabel={editLabel} />}
 
-              <TreeAction item={item} action={'delete'} fetchTree={item.fetchTree} />
+              <TreeAction item={item} action={'delete'} fetchTree={item.fetchTree} setDeleteCardId={setDeleteCardId} />
             </Box>
           </Box>
 

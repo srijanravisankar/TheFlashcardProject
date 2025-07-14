@@ -8,10 +8,12 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import api from '../../api';
 import { normalizeAll } from '../../utils';
 import { CustomTreeItem } from './CustormTreeItem';
+import { TreeAction } from './TreeAction';
 
 export default function FolderTree() {
   const [tree, setTree] = useState(null);
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const fetchTree = () => {
     Promise.all([api.get('/folders'), api.get('/decks/')])
@@ -41,13 +43,17 @@ export default function FolderTree() {
   return (
     <Box sx={{ padding: 2 }}>
       <h2>Srijan's FSRS App</h2>
+      {/* <Box sx={{ display: 'flex', gap: 0.5, marginLeft: 'auto' }}> */}
       {
         tree === null ?  <CircularProgress sx={{ color: 'black' }} /> : 
+        <>
           <RichTreeView
-            items={tree}
-            slots={{ item: CustomTreeItem }}
-            onItemClick={handleItemClick}
+          items={tree}
+          slots={{ item: CustomTreeItem }}
+          onItemClick={handleItemClick}
           />
+          <TreeAction action={'add'} anchorEl={anchorEl} setAnchorEl={setAnchorEl} fetchTree={fetchTree} />
+        </>
       }
     </Box>
   );

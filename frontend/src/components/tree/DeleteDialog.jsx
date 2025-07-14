@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { deleteFolder } from '../../routes/FolderRoutes';
 import { deleteDeck } from '../../routes/DeckRoutes';
 
-export default function DeleteDialog({itemId, itemLabel, itemType, open, setOpen, fetchTree}) {
+export default function DeleteDialog({itemId, itemLabel, itemType, open, setOpen, fetchTree, setDeleteCardId}) {
 
 	const deleteItem = () => {
 		if (itemId.startsWith('folder')) {
@@ -23,6 +23,7 @@ export default function DeleteDialog({itemId, itemLabel, itemType, open, setOpen
 	}
 
 	const handleClose = () => {
+		setDeleteCardId(null);
 		setOpen(false);
 	};
 
