@@ -67,7 +67,7 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, star
 		
 			{action === 'add' ? <AddPopover id='add' itemId={item.id} popoverOpen={open} anchorEl={anchorEl} handlePopoverClose={handleClose} fetchTree={item.fetchTree} /> : null}
 
-			{action === 'delete' ? <DeleteDialog itemId={item.id} open={deleteOpen} setOpen={setDeleteOpen} fetchTree={item.fetchTree} /> : null}
+			{action === 'delete' ? <DeleteDialog itemId={item.id} open={deleteOpen} setOpen={setDeleteOpen} fetchTree={item.fetchTree} itemLabel={item.label} itemType={item.type} /> : null}
 
 		</Box>
 	);

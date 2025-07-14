@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { deleteFolder } from '../../routes/FolderRoutes';
 import { deleteDeck } from '../../routes/DeckRoutes';
 
-export default function DeleteDialog({itemId, open, setOpen, fetchTree}) {
+export default function DeleteDialog({itemId, itemLabel, itemType, open, setOpen, fetchTree}) {
 
 	const deleteItem = () => {
 		if (itemId.startsWith('folder')) {
@@ -22,7 +22,6 @@ export default function DeleteDialog({itemId, open, setOpen, fetchTree}) {
 		setOpen(false);
 	}
 
-
 	const handleClose = () => {
 		setOpen(false);
 	};
@@ -35,17 +34,17 @@ export default function DeleteDialog({itemId, open, setOpen, fetchTree}) {
 		aria-describedby="alert-dialog-description"
 		onClick={e => e.stopPropagation()}
 		>
-				<DialogTitle id="alert-dialog-title">
+				<DialogTitle id="alert-dialog-title" sx={{fontSize: 17}}>
 						{"Delete Confirmation"}
 				</DialogTitle>
 				<DialogContent>
-						<DialogContentText id="alert-dialog-description">
-						Are you sure want to delete?
+						<DialogContentText id="alert-dialog-description" sx={{fontSize: 10}}>
+							Are you sure want to delete the {itemType} '{itemLabel}'?
 						</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-						<Button onClick={handleClose}>Cancel</Button>
-						<Button onClick={deleteItem} autoFocus>Delete</Button>
+						<Button onClick={handleClose} sx={{color: 'black', fontSize: 3}}>Cancel</Button>
+						<Button onClick={deleteItem} autoFocus sx={{backgroundColor: 'black', color: 'white', fontSize: 3}}>Delete</Button>
 				</DialogActions>
 		</Dialog>
 	);

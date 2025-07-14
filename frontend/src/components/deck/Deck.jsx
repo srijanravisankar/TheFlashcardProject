@@ -96,7 +96,7 @@ export default function Deck() {
             </Box>
           ) : (
             cards.map((card) => (
-              <Paper key={card.id} sx={paperStyle}>
+              <Paper key={card.id} sx={deleteCardId === card.id ? deletePaperStyle : paperStyle}>
                 {editCardId !== card.id ? <>
                     <Box sx={editCardStyle}>
                       <Typography><strong>Q:</strong> {card.front_text}</Typography>
@@ -116,7 +116,7 @@ export default function Deck() {
                       <TextField label="Back text" defaultValue={backText} onChange={(e) => setBackText(e.target.value)} />
                       <Box>
                         <IconButton onClick={() => handleUpdate(card.id, {deckId, frontText, backText})}><SaveRoundedIcon sx={{ color: 'black' }} /></IconButton>
-                        <IconButton onClick={() => handleDelete(card.id)}><DeleteRoundedIcon sx={{ color: 'black' }} /></IconButton>
+                        <IconButton onClick={() => setEditCardId(null)}><CancelIcon sx={{ color: 'black' }} /></IconButton>
                       </Box>
                     </Box>
                   </>
@@ -127,7 +127,7 @@ export default function Deck() {
         )
       }
 
-      <CardDeleteDialog itemId={deleteCardId} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} />
+      <CardDeleteDialog itemId={deleteCardId} open={deleteOpen} setOpen={setDeleteOpen} fetchCards={fetchCards} setDeleteCardId={setDeleteCardId} />
 
       {!create ? <></> : 
       <Paper sx={paperStyle}>
@@ -153,6 +153,15 @@ const paperStyle = {
   padding: 2, 
   marginBottom: 2, 
   backgroundColor: '#F6F6F6', 
+  boxShadow: 8, 
+  cursor: 'pointer',
+  '&:hover': { boxShadow: 3 }
+}
+
+const deletePaperStyle = {
+  padding: 2, 
+  marginBottom: 2, 
+  backgroundColor: '#d5d5d5ff', 
   boxShadow: 8, 
   cursor: 'pointer',
   '&:hover': { boxShadow: 3 }

@@ -7,7 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { deleteCard } from '../../routes/CardRoutes';
 
-export default function CardDeleteDialog({itemId, open, setOpen, fetchCards}) {
+export default function CardDeleteDialog({itemId, open, setOpen, fetchCards, setDeleteCardId}) {
 
 	console.log("deleted item with id: ", itemId);
 	const deleteItem = async () => {
@@ -18,40 +18,30 @@ export default function CardDeleteDialog({itemId, open, setOpen, fetchCards}) {
 	}
 
 	const handleClose = () => {
+		setDeleteCardId(null);
 		setOpen(false);
 	};
 
 	return (
-		<Dialog
-		open={open}
-		onClose={handleClose}
-		aria-labelledby="alert-dialog-title"
-		aria-describedby="alert-dialog-description"
-		onClick={e => e.stopPropagation()}
-		slotProps={{
-    paper: {
-      sx: {
-				margin: 0,
-				padding: 0,
-        width: '300px',
-				height: '190px',
-        maxWidth: '90%',
-      },
-    },
-  }}
-		>
-			<DialogTitle id="alert-dialog-title" sx={{margin: 0, padding: 0}}>
-				{"Delete Confirmation"}
-			</DialogTitle>
-			<DialogContent>
-					<DialogContentText id="alert-dialog-description" sx={{margin: 0, padding: 0, width: "250px"}}>
-							Are you sure want to delete?
-					</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-					<Button onClick={handleClose} sx={{color: "grey"}}>Cancel</Button>
-					<Button variant="contained" onClick={deleteItem} autoFocus sx={{backgroundColor: "black"}}>Delete</Button>
-			</DialogActions>
-		</Dialog>
-	);
+			<Dialog
+			open={open}
+			onClose={handleClose}
+			aria-labelledby="alert-dialog-title"
+			aria-describedby="alert-dialog-description"
+			onClick={e => e.stopPropagation()}
+			>
+					<DialogTitle id="alert-dialog-title" sx={{fontSize: 17}}>
+							{"Delete Confirmation"}
+					</DialogTitle>
+					<DialogContent>
+							<DialogContentText id="alert-dialog-description" sx={{fontSize: 10}}>
+								Are you sure want to delete the flashcard?
+							</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+							<Button onClick={handleClose} sx={{color: 'black', fontSize: 3}}>Cancel</Button>
+							<Button onClick={deleteItem} autoFocus sx={{backgroundColor: 'black', color: 'white', fontSize: 3}}>Delete</Button>
+					</DialogActions>
+			</Dialog>
+		);
 }

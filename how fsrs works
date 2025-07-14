@@ -30,3 +30,16 @@ Just keep a mental bookmark: if filtering, sorting, or session logic gets slow o
 i want to get cards that is in learning or relearning state AND their due are within current time.
 i also want to get cards that is in review state AND their due are within current time. (because i dont want to miss the review cards if their due dates falls below current time right?)
 then, i want to order the cards by their states. the learning cards should be first, then relearning cards, the review cards. then, i also want to order them by their due times.
+
+
+ change all done to loading when first studying
+ give diff bg to tree list when deleting 
+ add button to add root folders and decks
+ add backward going button
+ add status next to deck name in a deck
+ change typography
+ change button and paper radius
+ see how sqlite works and make it into a downloadble file
+ add llama AI
+ add tabs
+ add image, audio options
