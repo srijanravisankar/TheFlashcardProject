@@ -13,7 +13,6 @@ import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 
-import api from '../../api';
 import { getDeck } from '../../routes/DeckRoutes';
 import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
 import CardDeleteDialog from './CardDeleteDialog';
@@ -43,9 +42,7 @@ export default function Deck() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cardRes = await getCards(deckId);
-        setCards(cardRes.data);
-
+        fetchCards();
         const info = await getDeck(deckId);
         setDeckInfo(info);
       } catch (err) {
@@ -58,8 +55,7 @@ export default function Deck() {
 
   const handleCreate = async (card) => {
     await addCard(card);
-    const cardRes = await getCards(deckId);
-    setCards(cardRes.data);
+    fetchCards();
     setCreate(false);
   }
 
@@ -70,8 +66,7 @@ export default function Deck() {
 
   const handleUpdate = async (id, updatedCard) => {
     await updateCard(id, updatedCard.frontText, updatedCard.backText, deckId);
-    const cardRes = await getCards(deckId);
-    setCards(cardRes.data);
+    fetchCards();
     setEditCardId(null);
   }
 
