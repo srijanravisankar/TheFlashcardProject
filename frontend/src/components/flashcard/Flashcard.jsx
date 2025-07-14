@@ -8,12 +8,14 @@ import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfi
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import MoodBadIcon from '@mui/icons-material/MoodBad';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import CelebrationIcon from '@mui/icons-material/Celebration';
 
 import { getCards, updateCard } from '../../routes/CardRoutes';
+import Loader from '../../Loader';
 
 const Flashcard = () => {
   const { deckId } = useParams();
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState(null);
   const [flipped, setFlipped] = useState(false);
   const [currentCard, setCurrentCard] = useState(null);
   
@@ -28,7 +30,6 @@ const Flashcard = () => {
       }
     };
 
-  // Fetch cards once
   useEffect(() => {
     fetchData();
   }, [deckId]);
@@ -48,39 +49,40 @@ const Flashcard = () => {
 
   return (
     <StyledWrapper>
-      {currentCard ? (
-        <>
-          <div className="card" onClick={() => setFlipped(!flipped)}>
-            <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
-              <Paper className="card-front" sx={{ boxShadow: 20 }}>
-                <p>{currentCard.front_text}</p>
-              </Paper>
-              <Paper className="card-back" sx={{ boxShadow: 8 }}>
-                <p>{currentCard.back_text}</p>
-              </Paper>
+      {cards === null ? <Loader /> :
+        (currentCard ? (
+          <>
+            <div className="card" onClick={() => setFlipped(!flipped)}>
+              <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
+                <Paper className="card-front" sx={{ boxShadow: 20, '&:hover': {boxShadow: 3} }}>
+                  <p>{currentCard.front_text}</p>
+                </Paper>
+                <Paper className="card-back" sx={{ boxShadow: 8, '&:hover': {boxShadow: 3} }}>
+                  <p>{currentCard.back_text}</p>
+                </Paper>
+              </div>
             </div>
-          </div>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            {/* <Chip label="😟 Again" onClick={() => handleChipClick(1)} />
-            <Chip label="😕 Hard" onClick={() => handleChipClick(2)} />
-            <Chip label="😊 Good" onClick={() => handleChipClick(3)} /> */}
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVeryDissatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Again</Box>} onClick={() => handleChipClick(1)} sx={{color: 'white', backgroundColor: 'black', '&:hover': {backgroundColor: 'gray'}}} />
 
-            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVeryDissatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Again</Box>} onClick={() => handleChipClick(1)} sx={{color: 'white', backgroundColor: 'black'}} />
+              <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><MoodBadIcon sx={{fontSize: '18px', color: 'white'}}/> Hard</Box>} onClick={() => handleChipClick(2)} sx={{color: 'white', backgroundColor: 'black', '&:hover': {backgroundColor: 'gray'} }} />
 
-            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><MoodBadIcon sx={{fontSize: '18px', color: 'white'}}/> Hard</Box>} onClick={() => handleChipClick(2)} sx={{color: 'white', backgroundColor: 'black'}} />
+              <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentSatisfiedAltIcon sx={{fontSize: '18px', color: 'white'}}/> Good</Box>} onClick={() => handleChipClick(3)} sx={{color: 'white', backgroundColor: 'black', '&:hover': {backgroundColor: 'gray'}}} />
 
-            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentSatisfiedAltIcon sx={{fontSize: '18px', color: 'white'}}/> Good</Box>} onClick={() => handleChipClick(3)} sx={{color: 'white', backgroundColor: 'black'}} />
-
-            <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVerySatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Easy</Box>} onClick={() => handleChipClick(4)} sx={{color: 'white', backgroundColor: 'black'}} />
+              <Chip label={<Box sx={{display: 'flex', alignItems: 'center', gap: 0.5}}><SentimentVerySatisfiedIcon sx={{fontSize: '18px', color: 'white'}}/> Easy</Box>} onClick={() => handleChipClick(4)} sx={{color: 'white', backgroundColor: 'black', '&:hover': {backgroundColor: 'gray'}}} />
+            </Box>
+          </>
+        ) : (
+          <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+            <CelebrationIcon sx={{fontSize: '50px'}} />
+            <h1>All done for now!</h1>
+            <CelebrationIcon sx={{fontSize: '50px'}} />
           </Box>
-        </>
-      ) : (
-        <h2>All done! 🎉</h2>
-      )}
+        ))
+      }
     </StyledWrapper>
   );
 };
-
 
 const StyledWrapper = styled.div`
   height: 90vh;
