@@ -35,13 +35,13 @@ give diff bg to tree list when deleting
 add button to add root folders and decks
 change all done to loading when first studying
 create a new scheduler when cards is updated
-
-add backward going button
 add status next to deck name in a deck
+
+see how sqlite works and make it into a downloadble file
+add backward going button
 add review button to review all cards (randomly)
 change typography
 change button and paper radius
-see how sqlite works and make it into a downloadble file
 add llama AI
 add tabs
 add image, audio options

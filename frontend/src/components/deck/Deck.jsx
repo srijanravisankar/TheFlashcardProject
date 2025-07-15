@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Typography, Paper, IconButton, TextField, Fab, Button } from '@mui/material';
+import { Box, Typography, Paper, IconButton, TextField, Fab, Button, Badge, Tooltip } from '@mui/material';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
@@ -12,6 +12,9 @@ import ReportIcon from '@mui/icons-material/Report';
 import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
+import PreviewIcon from '@mui/icons-material/Preview';
+import RepeatIcon from '@mui/icons-material/Repeat';
 
 import { getDeck } from '../../routes/DeckRoutes';
 import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
@@ -75,6 +78,30 @@ export default function Deck() {
     navigate(`/decks/${deckId}/study`);
   }
 
+  let newCards = 0;
+  let learningCards = 0;
+  let reviewCards = 0;
+
+  if (cards) {
+    for (const card of cards) {
+      switch (card.fsrs_state.state) {
+        case 1:
+          newCards++;
+          break;
+        case 2:
+          reviewCards++;
+          break;
+        case 3:
+          learningCards++;
+          break;
+      }
+      console.log(card.fsrs_state.state);
+    }
+  }
+  
+  console.log(newCards, reviewCards, learningCards)
+
+
   return (
     <>
       {cards === null ? 
@@ -83,10 +110,25 @@ export default function Deck() {
         </Box> :
       <Box sx={{ padding: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LayersRoundedIcon sx={{ fontSize: '30px' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <LayersRoundedIcon sx={{ fontSize: '33px' }} />
             <h2>{deckInfo?.data.label || null}</h2>
+
+            <Badge badgeContent={newCards} color="secondary" max={99} overlap="circular"
+              sx={{'& .MuiBadge-badge': { backgroundColor: 'black'}, paddingLeft: '20px' }} >
+              <Tooltip title="New" arrow><FiberNewIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
+            </Badge>
+            <Badge badgeContent={reviewCards} color="secondary" max={99} overlap="circular"
+              sx={{'& .MuiBadge-badge': { backgroundColor: 'black'} }}>
+                <Tooltip title="To Review" arrow><PreviewIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
+            </Badge>
+            <Badge badgeContent={learningCards} color="secondary" max={99} overlap="circular"
+              sx={{'& .MuiBadge-badge': {height: '19px', width: '12px', backgroundColor: 'black'} }}>
+                <Tooltip title="Learning" arrow><RepeatIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
+            </Badge>
+
           </Box>
+
           <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
             <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
             Study
