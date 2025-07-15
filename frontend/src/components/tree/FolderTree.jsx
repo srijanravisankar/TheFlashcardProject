@@ -19,7 +19,7 @@ export default function FolderTree() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const fetchTree = () => {
-    Promise.all([api.get('/folders'), api.get('/decks/')])
+    Promise.all([api.get('/folders'), api.get('/decks')])
       .then(([folderRes, deckRes]) => {
         const folders = folderRes.data;
         const decks = deckRes.data;
