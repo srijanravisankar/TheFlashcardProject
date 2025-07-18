@@ -2,35 +2,43 @@
 export const normalizeTree = (folder, fetchTree) => {
   return {
     id: `folder-${folder.id}`,
-    label: `${folder.label}`,
+    label: folder.label,
+    created_at: folder.created_at,
     type: 'folder',
-    fetchTree, 
+    fetchTree,
     children: [
       ...(folder.subfolders?.map(subfolder => normalizeTree(subfolder, fetchTree)) ?? []),
       ...(folder.decks?.map(deck => ({
         id: `deck-${deck.id}`,
-        label: `${deck.label}`,
+        label: deck.label,
+        created_at: deck.created_at,
         type: 'deck',
         fetchTree,
         children: []
-      })) ?? [])
+      })) ?? []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     ]
   };
 };
 
 
 export const normalizeAll = (folders = [], decks = [], fetchTree) => {
-  const folderNodes = folders.map(folder => normalizeTree(folder, fetchTree));
+  const folderNodes = folders
+    .map(folder => normalizeTree(folder, fetchTree))
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
   const topLevelDecks = decks
     .filter(deck => !deck.folder_id)
     .map(deck => ({
       id: `deck-${deck.id}`,
       label: deck.label,
+      created_at: deck.created_at,
       type: 'deck',
       fetchTree,
       children: [],
-    }));
+    })).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-  return [...folderNodes, ...topLevelDecks];
+  const combined = [...folderNodes, ...topLevelDecks];
+  combined.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+  return combined;
 };

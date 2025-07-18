@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional, Any
+from typing import List, Optional
+from datetime import datetime
 
 # Folder -----------------------------------------------------------------------------------------
 class Folder(BaseModel):
@@ -13,6 +14,7 @@ class FolderResponse(Folder):
     id: int
     subfolders: List["FolderResponse"] = Field(default_factory=list)
     decks: List["DeckResponse"] = Field(default_factory=list)
+    created_at: datetime
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)
@@ -28,6 +30,7 @@ class DeckCreate(Deck):
 class DeckResponse(Deck):
     folder_id: Optional[int] = None
     id: int
+    created_at: datetime
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)
@@ -46,6 +49,7 @@ class CardCreate(Card):
 class CardResponse(Card):
     id: int
     fsrs_state: dict[str, int | float | str | None]
+    created_at: datetime
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)

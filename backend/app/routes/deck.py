@@ -33,10 +33,9 @@ def create_deck(deck: schemas.DeckCreate, session: Session = Depends(get_db)):
 # Get all the decks from the 'deck' table
 @router.get("/", response_model=List[schemas.DeckResponse])
 def get_decks(session: Session = Depends(get_db)):    
-    stmt = select(models.Deck)
+    stmt = select(models.Deck).order_by(models.Deck.created_at)
     result = session.scalars(stmt)
     decks = result.all()
-    print(decks)
     
     return decks
 

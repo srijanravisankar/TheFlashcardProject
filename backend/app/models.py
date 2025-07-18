@@ -1,6 +1,8 @@
 from typing import Optional, List
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship 
-from sqlalchemy import String, ForeignKey, JSON
+from datetime import datetime, timezone
+
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import String, DateTime, ForeignKey, JSON, func
 
 class Base(DeclarativeBase):
     pass
@@ -9,6 +11,7 @@ class Folder(Base):
     __tablename__ = "folder"
     id: Mapped[int] = mapped_column(primary_key=True)
     label: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
     
     # a deck has 0 or 1 parent folder
     parent_id: Mapped[Optional[int]] = mapped_column(ForeignKey("folder.id"), nullable=True)
@@ -22,6 +25,7 @@ class Deck(Base):
     __tablename__ = "deck"
     id: Mapped[int] = mapped_column(primary_key=True)
     label: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
     
     # a deck has 0 or 1 parent folder
     folder_id: Mapped[Optional[int]] = mapped_column(ForeignKey("folder.id"), nullable=True)
@@ -37,6 +41,7 @@ class Flashcard(Base):
     front_text: Mapped[str] = mapped_column(String, nullable=False)
     back_text: Mapped[str] = mapped_column(String, nullable=False)
     fsrs_state: Mapped[dict] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
     
     # a flashcard has 1 parent deck
     deck_id: Mapped[int] = mapped_column(ForeignKey("deck.id"), nullable=False)

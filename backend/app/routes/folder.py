@@ -39,7 +39,7 @@ def create_folder(folder: schemas.FolderCreate, session: Session = Depends(get_d
 # Get all the folders from the 'folder' table
 @router.get("/", response_model=List[schemas.FolderResponse])
 def get_folders(session: Session = Depends(get_db)):    
-    stmt = select(models.Folder).where(models.Folder.parent_id == None)
+    stmt = select(models.Folder).where(models.Folder.parent_id == None).order_by(models.Folder.created_at)
     result = session.scalars(stmt)
     folders = result.all()
     
