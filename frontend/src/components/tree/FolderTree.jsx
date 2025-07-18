@@ -52,7 +52,7 @@ export default function FolderTree() {
         <Box sx={{ padding: 2 }}>
           <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5}}>
             <StyleIcon sx={{fontSize: '33px'}} />
-            <h2>The Flashcard App</h2>
+            <h2>Momento</h2>
           </Box>
           <RichTreeView
           items={tree}

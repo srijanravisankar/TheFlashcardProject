@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Typography, Paper, IconButton, TextField, Fab, Button, Badge, Tooltip } from '@mui/material';
+import { Box, Typography, Paper, IconButton, TextField, Fab, Button, Badge, Tooltip, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
@@ -15,6 +15,7 @@ import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 import PreviewIcon from '@mui/icons-material/Preview';
 import RepeatIcon from '@mui/icons-material/Repeat';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import { getDeck } from '../../routes/DeckRoutes';
 import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
@@ -33,6 +34,17 @@ export default function Deck() {
   const [deckInfo, setDeckInfo] = useState(null);
 	const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteCardId, setDeleteCardId] = useState(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+
+  const options = ['FSRS', 'Ordered', 'Random'];
+
+  const handleMenuOpen = (event) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
 
   const fetchCards = async () => {
     try {
@@ -74,9 +86,10 @@ export default function Deck() {
     setEditCardId(null);
   }
 
-  const handleStudy = () => {
-    navigate(`/decks/${deckId}/study`);
-  }
+  const handleStudy = (option) => {
+    const query = new URLSearchParams({ option: JSON.stringify(option) }).toString();
+    navigate(`/decks/${deckId}/study?${query}`);
+  };
 
   let newCards = 0;
   let learningCards = 0;
@@ -109,7 +122,7 @@ export default function Deck() {
           <Loader />
         </Box> :
       <Box sx={{ padding: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', gap: 4}}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <LayersRoundedIcon sx={{ fontSize: '33px' }} />
             <h2>{deckInfo?.data.label || null}</h2>
@@ -129,10 +142,50 @@ export default function Deck() {
 
           </Box>
 
-          <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
+          <ButtonGroup
+            variant="outlined"
+            size="small"
+            sx={{
+              '& .MuiButton-root': {
+                color: 'white',
+                backgroundColor: 'black',
+                borderColor: 'black',
+                fontSize: '14px',
+                height: 36,
+                fontSizeAdjust: 5,
+                '&:hover': {
+                  backgroundColor: 'gray',
+                },
+              },
+            }}
+          >
+            <Button sx={{ fontSize: '7px', pointerEvents: 'none' }}><AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
+            Study</Button>
+            <Button onClick={handleMenuOpen} sx={{ fontSize: '2px', px: 0.5 }}>
+              <ArrowDropDownIcon sx={{fontSize: "27px", px: 0.01}} />
+            </Button>
+          </ButtonGroup>
+
+          <Menu
+            anchorEl={menuAnchorEl}
+            open={Boolean(menuAnchorEl)}
+            onClose={handleMenuClose}
+            slotProps={{
+              paper: {
+                sx: { backgroundColor: '#f9f9f9' }
+              },
+              listbox: {
+                dense: true
+              }
+            }}
+          >
+            {options.map((option) => (<MenuItem key={option} onClick={() => handleStudy(option)}>{option}</MenuItem>))}
+          </Menu>
+
+          {/* <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
             <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
             Study
-          </Button>
+          </Button> */}
         </Box>
 
         {(
