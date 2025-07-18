@@ -16,13 +16,17 @@
 
 
 import os
+import sys
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Path to SQLite DB file in current directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "../flashcard_db.sqlite3")
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path) # type: ignore
+    # Use the folder where the executable/script is running
+    return os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), relative_path)
 
+db_path = resource_path("flashcard_db.sqlite3")
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{db_path}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})

@@ -1,2 +1,11 @@
 .venv/
-__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+backend/build
+backend/dist
+backend/start.bat
+main.spec
+requirements.txt
+backend/app/static
