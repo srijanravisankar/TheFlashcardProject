@@ -19,13 +19,12 @@ export default function FolderTree() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const fetchTree = () => {
-    Promise.all([api.get('/folders'), api.get('/decks')])
+    Promise.all([api.get('/folders/'), api.get('/decks/')])
       .then(([folderRes, deckRes]) => {
         const folders = folderRes.data;
         const decks = deckRes.data;
         const normalized = normalizeAll(folders, decks, fetchTree);
         setTree(normalized);
-        console.log(normalized)
       })
       .catch(err => console.error('Failed to fetch tree:', err));
   };
@@ -35,11 +34,9 @@ export default function FolderTree() {
   const handleItemClick = (event, item) => {
     if (item.startsWith('deck-')) {
       const deckId = item.replace("deck-", "");
-      navigate(`/decks/${deckId}`)
-      console.log(`type: deck, id: ${deckId}`);
+      navigate(`/deck/${deckId}`)
     } else if (item.startsWith('folder-')) {
       const folderId = item.replace("folder-", "");
-      console.log(`type: folder, id: ${folderId}`);
     }
   };
 
@@ -52,7 +49,7 @@ export default function FolderTree() {
         <Box sx={{ padding: 2 }}>
           <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5}}>
             <StyleIcon sx={{fontSize: '33px'}} />
-            <h2>Momento</h2>
+            <h2>Memento</h2>
           </Box>
           <RichTreeView
           items={tree}

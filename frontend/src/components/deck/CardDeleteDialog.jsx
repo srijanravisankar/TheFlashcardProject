@@ -9,9 +9,7 @@ import { deleteCard } from '../../routes/CardRoutes';
 
 export default function CardDeleteDialog({itemId, open, setOpen, fetchCards, setDeleteCardId}) {
 
-	console.log("deleted item with id: ", itemId);
 	const deleteItem = async () => {
-		console.log("deleted item with id!!!!!!: ", itemId);
 		setDeleteCardId(null);
 		await deleteCard(itemId, fetchCards);
 		await fetchCards();

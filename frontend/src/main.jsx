@@ -2,8 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import './index.css';
-
 import FolderTree from './components/tree/FolderTree.jsx';
 import Deck from './components/deck/Deck.jsx';
 import Flashcard from './components/flashcard/Flashcard.jsx';
@@ -14,11 +12,11 @@ const router = createBrowserRouter([
     element: <FolderTree />,
   }, 
   {
-    path: '/decks/:deckId',
+    path: '/deck/:deckId',
     element: <Deck />
   },
   {
-    path: '/decks/:deckId/study',
+    path: '/deck/:deckId/study',
     element: <Flashcard />
   }
 ]);

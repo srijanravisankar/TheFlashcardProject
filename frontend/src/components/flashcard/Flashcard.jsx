@@ -27,8 +27,6 @@ const Flashcard = () => {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const option = JSON.parse(params.get('option') || '{}');
-
-  console.log(option);
   
   const fetchData = async () => {
       try {
@@ -40,14 +38,12 @@ const Flashcard = () => {
         } else {
           res = (await getCards(deckId, false)).data;
           if (counter < res.length) setCurrentCard(res[counter])
-          console.log(counter)
         } 
 
         if (!initialized && option === 'Random') {
           res = shuffleArray(res);
           setCurrentCard(res[counter])
         }
-        console.log(res);
         setInitialized(true);
         setCards(res);
       } catch (err) {
@@ -79,7 +75,6 @@ const Flashcard = () => {
     if (!currentCard) return;
 
     try {
-      console.log(currentCard)
       await updateCard(currentCard.id, currentCard.front_text, currentCard.back_text, deckId, rating, true);
       fetchData()
       setFlipped(false);

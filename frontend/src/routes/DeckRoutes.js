@@ -2,7 +2,7 @@ import api from "../api";
 
 export const addDeck = async (id, label, fetchTree) => {
     return api
-      .post(`/decks`, {
+      .post(`/decks/`, {
           label: label,
           folder_id: id
         })
@@ -14,13 +14,13 @@ export const addDeck = async (id, label, fetchTree) => {
 
 export const getDeck = async (id) => {
   return api
-          .get(`/decks/${id}`)
+          .get(`/decks/${id}/`)
           .catch((err) => console.error('Failed to fetch deck:', err));
 }
 
 export const updateDeck = async (id, label, fetchTree) => {
     return api
-      .put(`/decks/${id}`, {
+      .put(`/decks/${id}/`, {
           label: label
         })
         .then(() => {
@@ -31,7 +31,7 @@ export const updateDeck = async (id, label, fetchTree) => {
 
 export const deleteDeck = (id, fetchTree) => {
     api
-      .delete(`/decks/${id}`)
+      .delete(`/decks/${id}/`)
       .then(() => fetchTree())
       .catch((err) => console.error('Failed to delete deck:', err));
 }

@@ -3,3 +3,6 @@ change 'http://127.0.0.1:8000' to '/' in api.js
 
 
 backend:
+card.py file
+database.py file: change to sqlite3
+app/static/index.html: add /static before /assets

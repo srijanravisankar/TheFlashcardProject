@@ -13,7 +13,6 @@ export default function DeleteDialog({itemId, itemLabel, itemType, open, setOpen
 	const deleteItem = () => {
 		if (itemId.startsWith('folder')) {
 			const folderId = itemId.replace('folder-', '');
-			console.log(folderId)
 			deleteFolder(folderId, fetchTree)
 		} else if (itemId.startsWith('deck')) {
 			const deckId = itemId.replace('deck-', '');

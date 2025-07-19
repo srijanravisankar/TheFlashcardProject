@@ -2,7 +2,7 @@ import api from "../api";
 
 export const addFolder = async (id, label, fetchTree) => {
   return api
-      .post(`/folders`, {
+      .post(`/folders/`, {
           label: label,
           parent_id: id
         })
@@ -14,7 +14,7 @@ export const addFolder = async (id, label, fetchTree) => {
 
 export const updateFolder = async (id, label, fetchTree) => {
     return api
-      .put(`/folders/${id}`, {
+      .put(`/folders/${id}/`, {
           label: label
         })
         .then(() => {
@@ -25,7 +25,7 @@ export const updateFolder = async (id, label, fetchTree) => {
 
 export const deleteFolder = (id, fetchTree) => {
     api
-      .delete(`/folders/${id}`)
+      .delete(`/folders/${id}/`)
       .then(() => fetchTree())
       .catch((err) => console.error('Failed to delete folder:', err));
 }

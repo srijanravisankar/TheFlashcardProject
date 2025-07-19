@@ -88,7 +88,7 @@ export default function Deck() {
 
   const handleStudy = (option) => {
     const query = new URLSearchParams({ option: JSON.stringify(option) }).toString();
-    navigate(`/decks/${deckId}/study?${query}`);
+    navigate(`/deck/${deckId}/study?${query}`);
   };
 
   let newCards = 0;
@@ -108,12 +108,8 @@ export default function Deck() {
           learningCards++;
           break;
       }
-      console.log(card.fsrs_state.state);
     }
   }
-  
-  console.log(newCards, reviewCards, learningCards)
-
 
   return (
     <>

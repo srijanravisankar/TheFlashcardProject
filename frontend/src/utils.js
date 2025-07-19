@@ -15,8 +15,8 @@ export const normalizeTree = (folder, fetchTree) => {
         type: 'deck',
         fetchTree,
         children: []
-      })) ?? []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-    ]
+      })) ?? [])
+    ].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
   };
 };
 

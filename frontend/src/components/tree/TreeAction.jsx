@@ -24,7 +24,6 @@ export const TreeAction = ({item, action, setEdit, editLabel, setEditLabel, anch
 	};
 
 	const handleUpdate = async () => {
-		console.log('hi');
 		
 		if (item.type === 'folder') {
 			const folderId = item.id.replace('folder-', '');
