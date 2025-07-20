@@ -106,9 +106,6 @@ export default function Deck() {
           if (new Date(card.fsrs_state.due) <= new Date()) learningCards++;
           break;
         case 3:
-          console.log(card.fsrs_state.due);
-          console.log(new Date(card.fsrs_state.due).setHours(0, 0, 0, 0));
-          console.log(new Date().setHours(0, 0, 0, 0));
           if (new Date(card.fsrs_state.due).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) toReviewCards++;
           break;
       }
