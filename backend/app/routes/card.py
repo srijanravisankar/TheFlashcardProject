@@ -52,8 +52,8 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
             #     SELECT *
             #     FROM flashcard
             #     WHERE deck_id = :deck_id
-            #     AND ((fsrs_state->>'state')::int = 1
-            #     OR ((fsrs_state->>'state')::int IN (2, 3) AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
+            #     AND ((fsrs_state->>'state')::int IN (1, 2)
+            #     OR ((fsrs_state->>'state')::int = 3 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
             #     ORDER BY 
             #         CASE (fsrs_state->>'state')::int
             #             WHEN 3 THEN 1
@@ -68,9 +68,9 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
                 FROM flashcard
                 WHERE deck_id = :deck_id
                 AND (
-                    json_extract(fsrs_state, '$.state') = 1
+                    json_extract(fsrs_state, '$.state') IN (1, 2)
                     OR (
-                        json_extract(fsrs_state, '$.state') IN (2, 3)
+                        json_extract(fsrs_state, '$.state') = 3
                         AND datetime(json_extract(fsrs_state, '$.due')) <= datetime('now')
                     )
                 )
@@ -87,12 +87,12 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
             # stmt = text("""
             #     SELECT *
             #     FROM flashcard
-            #     WHERE ((fsrs_state->>'state')::int = 1
-            #     OR ((fsrs_state->>'state')::int IN (2, 3) AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
+            #     WHERE ((fsrs_state->>'state')::int IN (1, 2)
+            #     OR ((fsrs_state->>'state')::int = 3 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
             #     ORDER BY 
             #         CASE (fsrs_state->>'state')::int
-            #             WHEN 2 THEN 1
-            #             WHEN 3 THEN 2
+            #             WHEN 3 THEN 1
+            #             WHEN 2 THEN 2
             #             WHEN 1 THEN 3
             #         END,
             #         (fsrs_state->>'due')::timestamp DESC;
@@ -102,9 +102,9 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
                 SELECT *
                 FROM flashcard
                 WHERE (
-                    json_extract(fsrs_state, '$.state') = 1
+                    json_extract(fsrs_state, '$.state') IN (1, 2)
                     OR (
-                        json_extract(fsrs_state, '$.state') IN (2, 3)
+                        json_extract(fsrs_state, '$.state') = 3
                         AND datetime(json_extract(fsrs_state, '$.due')) <= datetime('now')
                     )
                 )

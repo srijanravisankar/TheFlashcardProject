@@ -16,19 +16,9 @@
 
 
 import os
-import sys
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from platformdirs import user_data_dir
-
-# def resource_path(relative_path):
-#     if hasattr(sys, '_MEIPASS'):
-#         return os.path.join(sys._MEIPASS, relative_path) # type: ignore
-#     # Use the folder where the executable/script is running
-#     return os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), relative_path)
-
-# db_path = resource_path("flashcard_db.sqlite3")
-
 
 APP_NAME = "MementoFlashcards"
 APP_AUTHOR = "SrijanRavisankar"

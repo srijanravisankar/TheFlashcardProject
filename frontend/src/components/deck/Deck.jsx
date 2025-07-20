@@ -15,6 +15,7 @@ import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 import PreviewIcon from '@mui/icons-material/Preview';
 import RepeatIcon from '@mui/icons-material/Repeat';
+import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import { getDeck } from '../../routes/DeckRoutes';
@@ -93,7 +94,7 @@ export default function Deck() {
 
   let newCards = 0;
   let learningCards = 0;
-  let reviewCards = 0;
+  let toReviewCards = 0;
 
   if (cards) {
     for (const card of cards) {
@@ -102,10 +103,10 @@ export default function Deck() {
           newCards++;
           break;
         case 2:
-          reviewCards++;
+          learningCards++;
           break;
         case 3:
-          learningCards++;
+          if (card.fsrs_state.due < new Date()) reviewCards++;
           break;
       }
     }
@@ -127,13 +128,13 @@ export default function Deck() {
               sx={{'& .MuiBadge-badge': { backgroundColor: 'black'}, paddingLeft: '20px' }} >
               <Tooltip title="New" arrow><FiberNewIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
             </Badge>
-            <Badge badgeContent={reviewCards} color="secondary" max={99} overlap="circular"
-              sx={{'& .MuiBadge-badge': { backgroundColor: 'black'} }}>
-                <Tooltip title="To Review" arrow><PreviewIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
-            </Badge>
             <Badge badgeContent={learningCards} color="secondary" max={99} overlap="circular"
+              sx={{'& .MuiBadge-badge': { backgroundColor: 'black'} }}>
+                <Tooltip title="Learning" arrow><LocalLibraryIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
+            </Badge>
+            <Badge badgeContent={toReviewCards} color="secondary" max={99} overlap="circular"
               sx={{'& .MuiBadge-badge': {height: '19px', width: '12px', backgroundColor: 'black'} }}>
-                <Tooltip title="Learning" arrow><RepeatIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
+                <Tooltip title="To Review" arrow><RepeatIcon color="action" sx={{fontSize: '26px', color: 'black'}} /></Tooltip>
             </Badge>
 
           </Box>
