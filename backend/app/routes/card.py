@@ -48,77 +48,79 @@ def get_cards(deck_id: Optional[int] = Query(None), study: Optional[bool] = Quer
     if study:
         # Study mode: only due cards
         if deck_id is not None:
-            # stmt = text("""
-            #     SELECT *
-            #     FROM flashcard
-            #     WHERE deck_id = :deck_id
-            #     AND ((fsrs_state->>'state')::int IN (1, 2)
-            #     OR ((fsrs_state->>'state')::int = 3 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
-            #     ORDER BY 
-            #         CASE (fsrs_state->>'state')::int
-            #             WHEN 3 THEN 1
-            #             WHEN 2 THEN 2
-            #             WHEN 1 THEN 3
-            #         END,
-            #         (fsrs_state->>'due')::timestamp DESC;
-            # """).bindparams(deck_id=deck_id)
-            
             stmt = text("""
                 SELECT *
                 FROM flashcard
                 WHERE deck_id = :deck_id
-                AND (
-                    json_extract(fsrs_state, '$.state') IN (1, 2)
-                    OR (
-                        json_extract(fsrs_state, '$.state') = 3
-                        AND datetime(json_extract(fsrs_state, '$.due')) <= datetime('now')
-                    )
-                )
-                ORDER BY
-                    CASE json_extract(fsrs_state, '$.state')
+                AND ((fsrs_state->>'state')::int = 1
+                OR ((fsrs_state->>'state')::int IN (2, 3) AND (fsrs_state->>'due')::date <= (NOW() AT TIME ZONE 'UTC')::date))
+                ORDER BY 
+                    CASE (fsrs_state->>'state')::int
                         WHEN 3 THEN 1
                         WHEN 2 THEN 2
                         WHEN 1 THEN 3
                     END,
-                    datetime(json_extract(fsrs_state, '$.due')) DESC;
+                    (fsrs_state->>'due')::timestamp DESC;
             """).bindparams(deck_id=deck_id)
-
-        else:
+            
             # stmt = text("""
             #     SELECT *
             #     FROM flashcard
-            #     WHERE ((fsrs_state->>'state')::int IN (1, 2)
-            #     OR ((fsrs_state->>'state')::int = 3 AND (fsrs_state->>'due')::timestamp <= (NOW() AT TIME ZONE 'UTC')))
-            #     ORDER BY 
-            #         CASE (fsrs_state->>'state')::int
+            #     WHERE deck_id = :deck_id
+            #     AND (
+            #         json_extract(fsrs_state, '$.state') = 1
+            #         OR (
+            #             json_extract(fsrs_state, '$.state') IN (2, 3)
+            #             AND date(json_extract(fsrs_state, '$.due')) <= date('now')
+            #         )
+            #     )
+            #     ORDER BY
+            #         CASE json_extract(fsrs_state, '$.state')
             #             WHEN 3 THEN 1
             #             WHEN 2 THEN 2
             #             WHEN 1 THEN 3
             #         END,
-            #         (fsrs_state->>'due')::timestamp DESC;
-            # """)
-            
+            #         datetime(json_extract(fsrs_state, '$.due')) DESC;
+            # """).bindparams(deck_id=deck_id)
+
+        else:
             stmt = text("""
                 SELECT *
                 FROM flashcard
-                WHERE (
-                    json_extract(fsrs_state, '$.state') IN (1, 2)
-                    OR (
-                        json_extract(fsrs_state, '$.state') = 3
-                        AND datetime(json_extract(fsrs_state, '$.due')) <= datetime('now')
-                    )
-                )
+                WHERE ((fsrs_state->>'state')::int = 1
+                OR ((fsrs_state->>'state')::int IN (2, 3) AND (fsrs_state->>'due')::date <= (NOW() AT TIME ZONE 'UTC')::date))
                 ORDER BY 
-                    CASE json_extract(fsrs_state, '$.state')
+                    CASE (fsrs_state->>'state')::int
                         WHEN 3 THEN 1
                         WHEN 2 THEN 2
                         WHEN 1 THEN 3
                     END,
-                    datetime(json_extract(fsrs_state, '$.due')) DESC;
+                    (fsrs_state->>'due')::timestamp DESC;
             """)
+            
+            # stmt = text("""
+            #     SELECT *
+            #     FROM flashcard
+            #     WHERE (
+            #         json_extract(fsrs_state, '$.state') = 1
+            #         OR (
+            #             json_extract(fsrs_state, '$.state') IN (2, 3)
+            #             AND date(json_extract(fsrs_state, '$.due')) <= date('now')
+            #         )
+            #     )
+            #     ORDER BY 
+            #         CASE json_extract(fsrs_state, '$.state')
+            #             WHEN 3 THEN 1
+            #             WHEN 2 THEN 2
+            #             WHEN 1 THEN 3
+            #         END,
+            #         datetime(json_extract(fsrs_state, '$.due')) DESC;
+            # """)
 
         
         cards = session.execute(stmt).fetchall()
+        for card in cards:
+            print(card.id)
         return [session.get(models.Flashcard, card.id) for card in cards]
 
     # If not in study mode, fall back to standard query
@@ -160,6 +162,10 @@ def update_card(id: int, update_card: schemas.CardCreate, study: Optional[bool] 
                             detail=f"Card with id '{id}' was not found")
         
     # update FSRS state
+    old_fsrs_card = Card.from_dict(card.fsrs_state)
+    if old_fsrs_card.step is None:
+        old_fsrs_card.step = 0
+            
     if study and update_card.rating is not None:
         rating = Rating.Again
         if update_card.rating == 2:
@@ -170,7 +176,6 @@ def update_card(id: int, update_card: schemas.CardCreate, study: Optional[bool] 
             rating = Rating.Easy
         
         now = datetime.now(timezone.utc)
-        old_fsrs_card = Card.from_dict(card.fsrs_state)
         new_fsrs_card, review_log = scheduler.review_card(old_fsrs_card, rating, now)  
         
         card.fsrs_state = new_fsrs_card.to_dict()

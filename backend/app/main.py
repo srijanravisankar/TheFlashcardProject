@@ -47,8 +47,8 @@ def resource_path(relative_path):
         return os.path.join(sys._MEIPASS, relative_path) # type: ignore
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
-static_dir = resource_path("app/static")
-# static_dir = resource_path("/")
+# static_dir = resource_path("app/static")
+static_dir = resource_path("/")
 app.mount("/static", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.get("/")
