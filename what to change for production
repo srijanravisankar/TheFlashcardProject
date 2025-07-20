@@ -6,3 +6,14 @@ backend:
 card.py file
 database.py file: change to sqlite3
 app/static/index.html: add /static before /assets
+
+
+to write in README file:
+- try to run the app in chrome or app based on chromium if the app doesn't run on other browsers
+- if getting windows protected error, click more info and click run anyway
+- db file is created a new in "C:\Users\<YourUsername>\AppData\Local\SrijanRavisankar\MementoFlashcards\memento_flashcard_db.sqlite3
+"
+- users can creeate a folder or deck in the main page. A folder can contain several folders and decks. A deck can have several flashcards. 
+- All folders, decks and flashcards can be modified, renamed, deleted or updated using the appropriate buttons.
+- there are 3 modes of studying a deck: FSRS, Ordered and Random:
+    - FSRS mode uses the classic FSRS algorithm of spaced repetition to remind the users to what to study at a certain point of time. Users can know the status of their possible study state next to the deck
