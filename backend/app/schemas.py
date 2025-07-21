@@ -44,7 +44,7 @@ class Card(BaseModel):
 class CardCreate(Card):
     fsrs_state: Optional[dict[str, int | float | str | None]] = None
     rating: Optional[int] = None
-    pass
+    pass    
 
 class CardResponse(Card):
     id: int
@@ -53,3 +53,7 @@ class CardResponse(Card):
     
     # Enables Pydantic to create the model from SQLAlchemy ORM objects by reading attributes instead of expecting a dict
     model_config = ConfigDict(from_attributes=True)
+    
+    
+class CardGenerate(BaseModel):
+    prompt: str

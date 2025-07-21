@@ -17,3 +17,14 @@ to write in README file:
 - All folders, decks and flashcards can be modified, renamed, deleted or updated using the appropriate buttons.
 - there are 3 modes of studying a deck: FSRS, Ordered and Random:
     - FSRS mode uses the classic FSRS algorithm of spaced repetition to remind the users to what to study at a certain point of time. Users can know the status of their possible study state next to the deck
+    State.Learning # (==1) new card being studied for the first time
+State.Review # (==2) card that has "graduated" from the Learning state
+State.Relearning # (==3) card that has "lapsed" from the Review state
+
+Rating.Again # (==1) forgot the card
+Rating.Hard # (==2) remembered the card with serious difficulty
+Rating.Good # (==3) remembered the card after a hesitation
+Rating.Easy # (==4) remembered the card easily
+
+
+users can also study randomly and in ordered fashion if they want to

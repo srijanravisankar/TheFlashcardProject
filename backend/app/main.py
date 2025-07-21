@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # From subpackages
 # from .routes import folder, deck, card
-from app.routes import folder, deck, card
+from app.routes import folder, deck, card, generator
 
 # From modules
 # from .models import Base
@@ -33,7 +33,7 @@ app.add_middleware(
 app.include_router(folder.router)
 app.include_router(deck.router)
 app.include_router(card.router)
-
+app.include_router(generator.router)
 
 # ...existing code...
 
@@ -47,8 +47,8 @@ def resource_path(relative_path):
         return os.path.join(sys._MEIPASS, relative_path) # type: ignore
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
-static_dir = resource_path("app/static")
-# static_dir = resource_path("/")
+# static_dir = resource_path("app/static")
+static_dir = resource_path("/")
 app.mount("/static", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.get("/")
