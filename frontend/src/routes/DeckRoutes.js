@@ -35,3 +35,21 @@ export const deleteDeck = (id, fetchTree) => {
       .then(() => fetchTree())
       .catch((err) => console.error('Failed to delete deck:', err));
 }
+
+// export const generateCards = async (deckId, prompt, onSuccess) => {
+//   api
+//     .post(`/generate/${deckId}/`, {
+//       prompt: prompt,
+//     })
+//     .then(() => onSuccess())
+//     .catch((err) => console.error('Error generating cards:', err));
+// }
+
+export const generateCards = async (deckId, prompt, onSuccess) => {
+  try {
+    await api.post(`/generate/${deckId}/`, { prompt });
+    if (onSuccess) onSuccess();
+  } catch (err) {
+    console.error('Error generating cards:', err);
+  }
+};

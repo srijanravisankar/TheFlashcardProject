@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # From subpackages
 # from .routes import folder, deck, card
-from app.routes import folder, deck, card, generator
+from app.routes import folder, deck, card, generator, api
 
 # From modules
 # from .models import Base
@@ -15,6 +15,7 @@ from app.database import engine
 
 # Create all database tables defined by SQLAlchemy models (if they don't already exist)
 Base.metadata.create_all(bind=engine)
+api.save_api_key("")
 
 app = FastAPI()
 
@@ -34,6 +35,7 @@ app.include_router(folder.router)
 app.include_router(deck.router)
 app.include_router(card.router)
 app.include_router(generator.router)
+app.include_router(api.router)
 
 # ...existing code...
 

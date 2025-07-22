@@ -57,3 +57,6 @@ class CardResponse(Card):
     
 class CardGenerate(BaseModel):
     prompt: str
+
+class Api(BaseModel):
+    api_key: str

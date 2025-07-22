@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Typography, Paper, IconButton, TextField, Fab, Button, Badge, Tooltip, ButtonGroup, Menu, MenuItem } from '@mui/material';
+import { Box, Typography, Paper, IconButton, TextField, Fab, Button, Badge, Tooltip, ButtonGroup, Menu, MenuItem, Popover } from '@mui/material';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
@@ -13,12 +13,14 @@ import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
-import PreviewIcon from '@mui/icons-material/Preview';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import SendIcon from '@mui/icons-material/Send';
+import { CircularProgress } from '@mui/material';
 
-import { getDeck } from '../../routes/DeckRoutes';
+import { getDeck, generateCards } from '../../routes/DeckRoutes';
 import { addCard, getCards, updateCard, deleteCard } from '../../routes/CardRoutes';
 import CardDeleteDialog from './CardDeleteDialog';
 import Loader from '../../Loader';
@@ -36,6 +38,9 @@ export default function Deck() {
 	const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteCardId, setDeleteCardId] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [aiAnchorEl, setAiAnchorEl] = useState(null);
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const options = ['FSRS', 'Ordered', 'Random'];
 
@@ -46,6 +51,31 @@ export default function Deck() {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
   };
+
+  const open = Boolean(aiAnchorEl);
+  const id = open ? 'simple-popover' : undefined;
+  const handleAiClick = (event) => {
+    setAiAnchorEl(event.currentTarget);
+  };
+
+  const handleAiClose = () => {
+    setAiAnchorEl(null);
+  };
+
+  const handleAiGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      await generateCards(deckId, prompt, () => {
+        fetchCards();
+        handleAiClose();
+      });
+    } catch (err) {
+      console.error('Failed to generate cards:', err);
+    } finally {
+      setIsGenerating(false);  // Stop loading spinner
+    }
+  };
+
 
   const fetchCards = async () => {
     try {
@@ -139,29 +169,59 @@ export default function Deck() {
 
           </Box>
 
-          <ButtonGroup
-            variant="outlined"
-            size="small"
-            sx={{
-              '& .MuiButton-root': {
-                color: 'white',
-                backgroundColor: 'black',
-                borderColor: 'black',
-                fontSize: '14px',
-                height: 36,
-                fontSizeAdjust: 5,
-                '&:hover': {
-                  backgroundColor: 'gray',
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Button sx={{ fontSize: '1px', '&:hover': {backgroundColor: '#c0c0c0ff',} }} aria-describedby={id} onClick={handleAiClick}>
+              <AutoAwesomeIcon sx={{paddingRight: '5px', color: 'black'}} />
+            </Button>  
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={aiAnchorEl}
+              onClose={handleAiClose}
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+            >
+              <TextField autoFocus variant='standard' placeholder='Topic' size="small"
+            sx={{ "& .MuiInputBase-input": { fontSize: 15, height: 16, padding: 1, width: 120, px: 0.5 }, marginLeft: '5px' }} onChange={(e) => setPrompt(e.target.value)} ></TextField>
+              {isGenerating ? (
+                <CircularProgress size={20} sx={{ margin: '10px', color: 'black' }} />
+              ) : (
+                <SendIcon
+                  sx={{ fontSize: '20px', color: 'black', cursor: 'pointer', padding: '5px', marginTop: '3px' }}
+                  onClick={handleAiGenerate}
+                />
+              )}
+            </Popover>        
+            <ButtonGroup
+              variant="outlined"
+              size="small"
+              sx={{
+                '& .MuiButton-root': {
+                  color: 'white',
+                  backgroundColor: 'black',
+                  borderColor: 'black',
+                  fontSize: '14px',
+                  height: 36,
+                  fontSizeAdjust: 5,
+                  '&:hover': {
+                    backgroundColor: 'gray',
+                  },
                 },
-              },
-            }}
-          >
-            <Button sx={{ fontSize: '7px', pointerEvents: 'none' }}><AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
-            Study</Button>
-            <Button onClick={handleMenuOpen} sx={{ fontSize: '2px', px: 0.5 }}>
-              <ArrowDropDownIcon sx={{fontSize: "27px", px: 0.01}} />
-            </Button>
-          </ButtonGroup>
+              }}
+            >
+              <Button sx={{ fontSize: '7px', pointerEvents: 'none' }}><AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
+              Study</Button>
+              <Button onClick={handleMenuOpen} sx={{ fontSize: '2px', px: 0.5 }}>
+                <ArrowDropDownIcon sx={{fontSize: "27px", px: 0.01}} />
+              </Button>
+            </ButtonGroup>
+          </Box>
 
           <Menu
             anchorEl={menuAnchorEl}
@@ -178,11 +238,6 @@ export default function Deck() {
           >
             {options.map((option) => (<MenuItem key={option} onClick={() => handleStudy(option)}>{option}</MenuItem>))}
           </Menu>
-
-          {/* <Button disabled={cards === null || cards?.length === 0} variant="contained" sx={{ backgroundColor: 'black' }} onClick={handleStudy}>
-            <AutoStoriesRoundedIcon sx={{paddingRight: '7px'}} />
-            Study
-          </Button> */}
         </Box>
 
         {(

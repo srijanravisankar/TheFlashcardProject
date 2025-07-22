@@ -3,7 +3,7 @@ import re
 from fsrs import Card
 import requests
 
-from fastapi import status, APIRouter, Response, HTTPException, Depends
+from fastapi import Header, status, APIRouter, Response, HTTPException, Depends
 from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -14,41 +14,47 @@ from ..database import get_db
 
 from .card import create_card
 
+from .api import load_api_key
+
 # Define the router 'generate'
 router = APIRouter(
     prefix="/generate",
-    tags=["Folders"]
+    tags=["AI Generator"]
 )
 
-headers = {
-    "Authorization": "Bearer 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",
-    "HTTP-Referer": "http://localhost",
-    "X-Title": "MementoFlashcards"
-}
+def send_request(content: str):
+    headers = {
+        "Authorization": f"Bearer {load_api_key()}",
+        "HTTP-Referer": "http://localhost",
+        "X-Title": "MementoFlashcards"
+    }
 
-messages = [
-    {
-        "role": "system", 
-        "content": """
-            You are a flashcard generator. Your job is to return a list of concise flashcards based on the topic provided by the user.
+    messages = [
+        {
+            "role": "system", 
+            "content": """
+                You are a flashcard generator. Your job is to return a list of concise flashcards based on the topic provided by the user.
 
-            Each flashcard must be a JSON object with:
-            - "question": a clear quiz-style question
-            - "answer": a short, factual answer
+                Each flashcard must be a JSON object with:
+                - "question": a clear quiz-style question
+                - "answer": a short, factual answer
 
-            Only return a JSON array like:
-            [
-            {"question": "...", "answer": "..."},
-            ...
-            ]"""
-    }, {"role": "user", "content": ""}
-]
+                Only return a JSON array like:
+                [
+                {"question": "...", "answer": "..."},
+                ...
+                ]"""
+        }, {"role": "user", "content": content}
+    ]
 
 
-data = {
-    "model": "deepseek/deepseek-chat-v3-0324:free",
-    "messages": messages
-}
+    data = {
+        "model": "deepseek/deepseek-chat-v3-0324:free",
+        "messages": messages
+    }
+    
+    return headers, data
+
 
 @router.post("/{deck_id}", status_code=status.HTTP_201_CREATED)
 def generate_flashcards(topic: schemas.CardGenerate, deck_id: int, session: Session = Depends(get_db)):
@@ -57,9 +63,7 @@ def generate_flashcards(topic: schemas.CardGenerate, deck_id: int, session: Sess
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Deck with id '{deck_id}' was not found")
         
-    messages[1]["content"] = topic.prompt
-    data["messages"] = messages
-    
+    headers, data = send_request(topic.prompt)    
     response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
     print(response)
 
@@ -95,6 +99,7 @@ def generate_flashcards(topic: schemas.CardGenerate, deck_id: int, session: Sess
     create_list = [
         schemas.CardCreate(front_text=card["question"], back_text=card["answer"], deck_id=deck_id) for card in flashcards_data
     ]
+    
     for card in create_list:
         new_card = models.Flashcard(**card.model_dump(exclude={"rating"}))
         session.add(new_card)
