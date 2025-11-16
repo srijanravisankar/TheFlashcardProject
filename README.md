@@ -47,6 +47,7 @@ This repo contains the source code for the 'Memento' release.
    ⚠️ **If Windows shows a “Windows protected your PC” warning:**
    - Click **More Info**
    - Then click **Run Anyway**
+   - You may also briefly want to disable your antivirus software for the app to appear and run
 
 3. The app will launch in your default browser.
    - Use **Google Chrome** or a **Chromium-based browser** if the app does not open in other browsers.
